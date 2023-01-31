@@ -1,3 +1,4 @@
+import 'package:bibliophile/widgets/bottom_navigation_bar_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -61,7 +62,12 @@ class LoginScreen extends StatelessWidget {
                         letterSpacing: 1,
                       ),
                     ),
-                    onPressed: null,
+                    onPressed: () => {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const BottomNavigationBarMenu()))
+                        },
                     icon: FaIcon(
                         color: Colors.white, FontAwesomeIcons.google, size: 30),
                     label: const Text(
