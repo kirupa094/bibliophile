@@ -1,5 +1,6 @@
 import 'package:bibliophile/screen/Home/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:responsive_framework/responsive_framework.dart';
 
 class App extends StatelessWidget {
@@ -9,7 +10,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Bibliophile App',
-      theme: ThemeData(backgroundColor: Colors.white),
+      theme: ThemeData(backgroundColor: Colors.white,
+          fontFamily: GoogleFonts.poppins().fontFamily),
       debugShowCheckedModeBanner: false,
       builder: (context, child) => ResponsiveWrapper.builder(child,
           maxWidth: 1200,
