@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "608620758662",
+    "project_id": "bibliophile-4b156",
+    "storage_bucket": "bibliophile-4b156.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608620758662:android:7e6faad32a545265a6b307",
+        "android_client_info": {
+          "package_name": "com.kelaniya.bibliophile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "608620758662-iqk6f5u1hbho8o6cv8ldcve0c7k8vlb0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kelaniya.bibliophile",
+            "certificate_hash": "de22e3aac091296d982581be6554194a90394579"
+          }
+        },
+        {
+          "client_id": "608620758662-tn54l8evmach5g4bgigr91ab388a17qm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kelaniya.bibliophile",
+            "certificate_hash": "f8794247cf7fcbe7de8e127a200ec4c6f79931b7"
+          }
+        },
+        {
+          "client_id": "608620758662-dlan77a352i8490r2fsp6e9f6boks34l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfYiPlaCO35t4kmGvJaiIiQXGwqMZOEUE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "608620758662-dlan77a352i8490r2fsp6e9f6boks34l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

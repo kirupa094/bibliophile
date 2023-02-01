@@ -1,9 +1,34 @@
+import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/widgets/bottom_navigation_bar_menu.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
-class LoginScreen extends StatelessWidget {
+final FirebaseAuth _auth = FirebaseAuth.instance;
+final GoogleSignIn _googleSignIn = GoogleSignIn(
+  scopes: [
+    'email',
+  ],
+);
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  _navigateHome(String? userId) {
+    if (userId != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const BottomNavigationBarMenu()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +43,7 @@ class LoginScreen extends StatelessWidget {
                 height: 80,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/splash.png'),
+                    image: AssetImage('assets/logo.png'),
                     fit: BoxFit.fitHeight,
                   ),
                 ),
@@ -60,12 +85,28 @@ class LoginScreen extends StatelessWidget {
                         letterSpacing: 1,
                       ),
                     ),
-                    onPressed: () => {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const BottomNavigationBarMenu()))
-                        },
+                    onPressed: () async {
+                      try {
+                        final GoogleSignInAccount? googleUser =
+                            await _googleSignIn.signIn();
+                        final GoogleSignInAuthentication googleAuth =
+                            await googleUser!.authentication;
+
+                        final AuthCredential credential =
+                            GoogleAuthProvider.credential(
+                          accessToken: googleAuth.accessToken,
+                          idToken: googleAuth.idToken,
+                        );
+
+                        final UserCredential userCredential =
+                            await _auth.signInWithCredential(credential);
+                        if (userCredential.user != null) {
+                          _navigateHome(userCredential.user!.uid);
+                        }
+                      } catch (e) {
+                        CustomFunction.loginErrorDialog(context,e.toString());
+                      }
+                    },
                     icon: FaIcon(
                         color: Colors.white, FontAwesomeIcons.google, size: 30),
                     label: const Text(
