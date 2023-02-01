@@ -10,7 +10,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Bibliophile App',
-      theme: ThemeData(backgroundColor: Colors.white,
+      theme: ThemeData(
+          backgroundColor: Colors.white,
           fontFamily: GoogleFonts.poppins().fontFamily),
       debugShowCheckedModeBanner: false,
       builder: (context, child) => ResponsiveWrapper.builder(child,
