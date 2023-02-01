@@ -102,12 +102,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         final UserCredential userCredential =
                             await _auth.signInWithCredential(credential);
-                        print(userCredential.user!.uid);
                         if (userCredential.user != null) {
                           _navigateHome(userCredential.user!.uid);
                         }
                       } catch (e) {
-                        print(e);
                         CustomFunction.loginErrorDialog(context,e.toString());
                       }
                     },
