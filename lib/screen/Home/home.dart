@@ -6,71 +6,45 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      // ignore: prefer_const_constructors
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          flexibleSpace: Row(
-            children: <Widget>[
-              Expanded(
-                child: Column(
-                  children: <Widget>[
-                    Image.asset(
-                      'assets/splash.png',
-                    ),
-                    Text('Bibliophile')
-                  ],
-                ),
-              ),
-              Container(
-                // ignore: prefer_const_constructors
-                height: 80,
-                decoration: const BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage('assets/splash.png'),
-                    alignment: Alignment.topLeft,
-                    fit: BoxFit.fitHeight,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(color: Colors.white),
+            padding: const EdgeInsets.only(left: 2),
+            alignment: Alignment.centerLeft,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/splash.png'),
+                        fit: BoxFit.fitWidth),
                   ),
+                  width: 60,
                 ),
-              ),
-              // ignore: prefer_const_constructors
-              const Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Text(
+                const SizedBox(
+                  width: 5,
+                ),
+                const Text(
                   'Bibliophile',
                   style: TextStyle(
+                      letterSpacing: 1,
                       color: Colors.black,
-                      fontSize: 30,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 1),
+                      fontSize: 25,
+                      fontWeight: FontWeight.w700),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-          // title: const Text(
-          //   'Bibliophile',
-          //   style: TextStyle(
-          //       color: Colors.black,
-          //       fontSize: 30,
-          //       fontWeight: FontWeight.w700,
-          //       letterSpacing: 1),
-          // ),
-          //  Container(
-          //   // ignore: prefer_const_constructors
-          //   height: 80,
-          // decoration: const BoxDecoration(
-          //   image: DecorationImage(
-          //     image: AssetImage('assets/splash.png'),
-          //     alignment: Alignment.topLeft,
-          //     fit: BoxFit.fitHeight,
-          //   ),
-          // ),
-          // ),
-          backgroundColor: Colors.white,
         ),
-        body: const Center(
-          child: Text('ge'),
-        ),
+        body: Center(
+            child: Text(
+          'Home',
+          style: TextStyle(color: Colors.black),
+        )),
       ),
     );
   }
