@@ -2,7 +2,7 @@ import 'package:bibliophile/util/constant.dart';
 import 'package:flutter/material.dart';
 
 abstract class CustomFunction {
-  static Future<void> logoutDialog(BuildContext context) async {
+  static Future<void> loginErrorDialog(BuildContext context,String msg) async {
     return showDialog<void>(
       barrierDismissible: false,
       context: context,
@@ -34,11 +34,11 @@ abstract class CustomFunction {
           child: Center(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
+              children: [
                 Text(
-                  'GOOGLE SIGN IN FAILED!',
+                  msg,
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: textPrimary, fontSize: 14),
+                  style: const TextStyle(color: textPrimary, fontSize: 14),
                 ),
               ],
             ),

@@ -108,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       } catch (e) {
                         print(e);
-                        CustomFunction.logoutDialog(context);
+                        CustomFunction.loginErrorDialog(context,e.toString());
                       }
                     },
                     icon: FaIcon(
