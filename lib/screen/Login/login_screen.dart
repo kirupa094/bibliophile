@@ -1,3 +1,4 @@
+import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/widgets/bottom_navigation_bar_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +12,23 @@ final GoogleSignIn _googleSignIn = GoogleSignIn(
   ],
 );
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  _navigateHome(String? userId) {
+    if (userId != null) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const BottomNavigationBarMenu()),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,21 +88,28 @@ class LoginScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed: () async {
-                      final GoogleSignInAccount? googleUser =
-                          await _googleSignIn.signIn();
-                      final GoogleSignInAuthentication googleAuth =
-                          await googleUser!.authentication;
+                      try {
+                        final GoogleSignInAccount? googleUser =
+                            await _googleSignIn.signIn();
+                        final GoogleSignInAuthentication googleAuth =
+                            await googleUser!.authentication;
 
-                      final AuthCredential credential =
-                          GoogleAuthProvider.credential(
-                        accessToken: googleAuth.accessToken,
-                        idToken: googleAuth.idToken,
-                      );
+                        final AuthCredential credential =
+                            GoogleAuthProvider.credential(
+                          accessToken: googleAuth.accessToken,
+                          idToken: googleAuth.idToken,
+                        );
 
-                      final UserCredential userCredential =
-                          await _auth.signInWithCredential(credential);
-
-                      print(userCredential.user!.uid);
+                        final UserCredential userCredential =
+                            await _auth.signInWithCredential(credential);
+                        print(userCredential.user!.uid);
+                        if (userCredential.user != null) {
+                          _navigateHome(userCredential.user!.uid);
+                        }
+                      } catch (e) {
+                        print(e);
+                        CustomFunction.logoutDialog(context);
+                      }
                     },
                     icon: FaIcon(
                         color: Colors.white, FontAwesomeIcons.google, size: 30),
