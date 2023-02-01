@@ -16,12 +16,7 @@ class BottomNavigationBarMenu extends StatefulWidget {
 class _BottomNavigationBarMenuState extends State<BottomNavigationBarMenu> {
   int _currentIndex = 0;
 
-  final List<Widget> _children = [
-    const Home(),
-    const Shelf(),
-    const Post(),
-    const Profile()
-  ];
+  final List<Widget> _children = [const Home(), const Shelf(), const Profile()];
 
   void onTabTapped(int index) {
     setState(() {
@@ -51,10 +46,6 @@ class _BottomNavigationBarMenuState extends State<BottomNavigationBarMenu> {
           BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.book),
             label: "Shelf",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.add),
-            label: "Post",
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
