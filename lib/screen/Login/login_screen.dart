@@ -38,6 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
         body: Container(
           margin: const EdgeInsets.only(left: 10, right: 10),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
                 height: 80,
