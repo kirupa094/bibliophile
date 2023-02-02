@@ -8,6 +8,7 @@ class Home extends StatelessWidget {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          elevation: 0,
           automaticallyImplyLeading: false,
           flexibleSpace: Container(
             decoration: const BoxDecoration(color: Colors.white),
@@ -20,7 +21,7 @@ class Home extends StatelessWidget {
                 Container(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage('assets/splash.png'),
+                        image: AssetImage('assets/logo.png'),
                         fit: BoxFit.fitWidth),
                   ),
                   width: 60,
