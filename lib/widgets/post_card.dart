@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 
 class PostCard extends StatefulWidget {
@@ -99,23 +101,59 @@ class _PostCardState extends State<PostCard> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  IconButton(
-                    icon: isLiked
-                        ? const Icon(Icons.favorite)
-                        : const Icon(Icons.favorite_border),
-                    onPressed: toggleLike,
-                    color: isLiked ? Colors.red : null,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: isLiked
+                            ? const Icon(Icons.favorite)
+                            : const Icon(Icons.favorite_border),
+                        onPressed: toggleLike,
+                        color: isLiked ? Colors.red : null,
+                      ),
+                      const Text(
+                        'Like',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14),
+                      )
+                    ],
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.comment),
-                    onPressed: () {},
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.comment),
+                        onPressed: () {},
+                      ),
+                      const Text(
+                        'Comment',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14),
+                      )
+                    ],
                   ),
-                  IconButton(
-                    icon: isSaved
-                        ? const Icon(Icons.bookmark)
-                        : const Icon(Icons.bookmark_border),
-                    onPressed: toggleSave,
-                    color: isSaved ? Colors.blue : null,
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: isSaved
+                            ? const Icon(Icons.bookmark)
+                            : const Icon(Icons.bookmark_border),
+                        onPressed: toggleSave,
+                        color: isSaved ? Colors.blue : null,
+                      ),
+                      const Text(
+                        'Save',
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14),
+                      )
+                    ],
                   ),
                 ],
               ),

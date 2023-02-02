@@ -1,3 +1,4 @@
+import 'package:bibliophile/widgets/post_card.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
@@ -41,11 +42,7 @@ class Home extends StatelessWidget {
             ),
           ),
         ),
-        body: Center(
-            child: Text(
-          'Home',
-          style: TextStyle(color: Colors.black),
-        )),
+        body: const PostCard(),
       ),
     );
   }
