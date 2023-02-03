@@ -40,7 +40,10 @@ class Bloc {
     ));
 
     String? token = prefs.getString('token');
-
     _token = token ?? '';
   }
+
+  //INIT DATA
+  Stream<InitData> get initDataConfig => _initDataConfig.stream;
+  Function(InitData) get changeInitDataConfig => _initDataConfig.sink.add;
 }

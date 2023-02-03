@@ -1,4 +1,5 @@
 import 'package:bibliophile/app.dart';
+import 'package:bibliophile/bloc/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,5 +9,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+  Bloc bloc = Bloc();
+  await bloc.getInitData();
   runApp(const App());
 }
