@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../Home/intro_screen.dart';
+
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = GoogleSignIn(
   scopes: [
@@ -24,8 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (userId != null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-            builder: (context) => const BottomNavigationBarMenu()),
+        MaterialPageRoute(builder: (context) => const IntroScreen()),
       );
     }
   }
@@ -106,7 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           _navigateHome(userCredential.user!.uid);
                         }
                       } catch (e) {
-                        CustomFunction.loginErrorDialog(context,e.toString());
+                        CustomFunction.loginErrorDialog(context, e.toString());
                       }
                     },
                     icon: FaIcon(
