@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (token != null) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const IntroScreen()),
+        MaterialPageRoute(builder: (context) => IntroScreen()),
       );
     }
   }

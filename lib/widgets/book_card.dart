@@ -1,17 +1,25 @@
-// ignore_for_file: unnecessary_const
-
 import 'package:flutter/material.dart';
 
 class BookCard extends StatelessWidget {
-  const BookCard({Key? key}) : super(key: key);
+  final String title;
+  final String author;
+  final String imgUrl;
+  final String year;
+  const BookCard(
+      {Key? key,
+      required this.title,
+      required this.author,
+      required this.imgUrl,
+      required this.year})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 150,
-      height: 200,
+      width: MediaQuery.of(context).size.width/2,
+      height: 250,
+      margin: const EdgeInsets.only(bottom: 10),
       decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(10)),
           color: Colors.white,
           boxShadow: [
             BoxShadow(
@@ -24,46 +32,44 @@ class BookCard extends StatelessWidget {
           children: [
             Expanded(
               child: Container(
-                width: 150,
-                height: 130,
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10)),
+                width: MediaQuery.of(context).size.width / 2,
+                height: 200,
+                decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: NetworkImage(
-                            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR9R_McJgTQzUpfPJVEXadatDd40pM9fkzyKw&usqp=CAU'),
-                        fit: BoxFit.cover)),
+                        image: NetworkImage(imgUrl), fit: BoxFit.cover)),
               ),
             ),
-            const SizedBox(
+            SizedBox(
               width: 150,
               child: Padding(
-                padding: EdgeInsets.only(left: 5, right: 5),
+                padding: const EdgeInsets.only(left: 5, right: 5),
                 child: Text(
-                  'title:Harry Potter',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+                  'title:$title',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w500, fontSize: 12),
                 ),
               ),
             ),
-            const SizedBox(
+            SizedBox(
               width: 150,
               child: Padding(
-                padding: EdgeInsets.only(left: 5, right: 5),
+                padding: const EdgeInsets.only(left: 5, right: 5),
                 child: Text(
                   maxLines: 2,
-                  'By:J.K. Rowling',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+                  'By: $author',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w500, fontSize: 12),
                 ),
               ),
             ),
-            const SizedBox(
+            SizedBox(
               width: 150,
               child: Padding(
-                padding: EdgeInsets.only(left: 5, right: 5),
+                padding: const EdgeInsets.only(left: 5, right: 5),
                 child: Text(
-                  'Year: 2002',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+                  'Year: ${year.split('-')[0]}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w500, fontSize: 12),
                 ),
               ),
             ),

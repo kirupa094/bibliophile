@@ -42,7 +42,7 @@ class Shelf extends StatelessWidget {
             ),
           ),
         ),
-        body: BookCard(),
+        body: Container(),
       ),
     );
   }

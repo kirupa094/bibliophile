@@ -1,4 +1,5 @@
 import 'package:bibliophile/bloc/provider.dart';
+import 'package:bibliophile/screen/Home/intro_screen.dart';
 import 'package:bibliophile/screen/Login/login_screen.dart';
 import 'package:bibliophile/widgets/bottom_navigation_bar_menu.dart';
 import 'package:flutter/material.dart';
@@ -44,12 +45,18 @@ class NavigatorScreen extends StatelessWidget {
         builder: (context, AsyncSnapshot<InitData> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data?.token != '') {
-              return const BottomNavigationBarMenu();
+              return IntroScreen();
             } else {
               return const LoginScreen();
             }
           } else {
-            return const LoginScreen();
+            return const Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(
+                  color: Color.fromARGB(255, 101, 88, 245),
+                ),
+              ),
+            );
           }
         });
   }
