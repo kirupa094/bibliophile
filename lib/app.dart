@@ -1,4 +1,5 @@
 import 'package:bibliophile/bloc/provider.dart';
+import 'package:bibliophile/screen/Home/home.dart';
 import 'package:bibliophile/screen/Home/intro_screen.dart';
 import 'package:bibliophile/screen/Login/login_screen.dart';
 import 'package:bibliophile/widgets/bottom_navigation_bar_menu.dart';
@@ -45,7 +46,8 @@ class NavigatorScreen extends StatelessWidget {
         builder: (context, AsyncSnapshot<InitData> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data?.token != '') {
-              return IntroScreen(token: snapshot.data!.token);
+              bloc!.refreshToken(context);
+              return const Home();
             } else {
               return const LoginScreen();
             }

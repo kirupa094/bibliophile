@@ -1,19 +1,11 @@
 import 'package:bibliophile/bloc/provider.dart';
 import 'package:bibliophile/customFunction/custom_function.dart';
-import 'package:bibliophile/widgets/bottom_navigation_bar_menu.dart';
+import 'package:bibliophile/screen/Home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Home/intro_screen.dart';
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
-final GoogleSignIn _googleSignIn = GoogleSignIn(
-  scopes: [
-    'email',
-  ],
-);
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -23,18 +15,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  _signIn(token, Bloc bloc) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString("token", token);
-    bloc.setToken(token);
-    _navigateHome(token);
+  _signIn(String token, bool isNewUser) async {
+    _navigateHome(token, isNewUser);
   }
 
-  _navigateHome(String? token) {
-    if (token != null) {
+  _navigateHome(String? token, bool isNewUser) {
+    if (!isNewUser) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => IntroScreen()),
+        MaterialPageRoute(builder: (context) => const Home()),
+      );
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const IntroScreen()),
       );
     }
   }
@@ -102,22 +96,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       onPressed: () async {
                         try {
-                          final GoogleSignInAccount? googleUser =
-                              await _googleSignIn.signIn();
-                          final GoogleSignInAuthentication googleAuth =
-                              await googleUser!.authentication;
-
-                          final AuthCredential credential =
-                              GoogleAuthProvider.credential(
-                            accessToken: googleAuth.accessToken,
-                            idToken: googleAuth.idToken,
-                          );
-
                           final UserCredential userCredential =
-                              await _auth.signInWithCredential(credential);
+                              await bloc!.signInWithGoogle(context);
                           final token = await userCredential.user!.getIdToken();
+                          final isNewUser =
+                              userCredential.additionalUserInfo!.isNewUser;
                           if (userCredential.user != null) {
-                            _signIn(token, bloc!);
+                            _signIn(token, isNewUser);
                           }
                         } catch (e) {
                           CustomFunction.loginErrorDialog(

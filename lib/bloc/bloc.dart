@@ -1,5 +1,9 @@
+import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
 import 'package:bibliophile/resources/repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,6 +42,55 @@ class Bloc {
         _searchController = BehaviorSubject<String>(),
         _bookResult = BehaviorSubject<List<BookModel>>();
 
+  //AUTH SERVICES
+  signInWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignInAccount? googleUser =
+          await GoogleSignIn(scopes: <String>["email"]).signIn();
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      return getCredential(credential, context);
+    } catch (e) {
+      CustomFunction.loginErrorDialog(context, e.toString());
+    }
+  }
+
+  getCredential(AuthCredential credential, BuildContext context) async {
+    try {
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } catch (e) {
+      CustomFunction.loginErrorDialog(context, e.toString());
+    }
+  }
+
+  refreshToken(BuildContext context) async {
+    try {
+      final GoogleSignInAccount? googleUser =
+          await GoogleSignIn(scopes: <String>["email"]).signInSilently();
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      final UserCredential userCredential =
+          await getCredential(credential, context);
+      final token = await userCredential.user!.getIdToken();
+      _token = token;
+    } catch (e) {
+      CustomFunction.loginErrorDialog(context, e.toString());
+    }
+  }
+
+  //INIT DATA
   getInitData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _initDataConfig.sink.add(InitData(
