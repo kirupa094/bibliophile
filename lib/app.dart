@@ -47,7 +47,7 @@ class NavigatorScreen extends StatelessWidget {
           if (snapshot.hasData) {
             if (snapshot.data?.token != '') {
               bloc!.refreshToken(context);
-              return const Home();
+              return const BottomNavigationBarMenu();
             } else {
               return const LoginScreen();
             }

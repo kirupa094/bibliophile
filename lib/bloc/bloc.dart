@@ -1,5 +1,6 @@
 import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/signup_model.dart';
 import 'package:bibliophile/resources/repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,6 +20,7 @@ class Bloc {
   final BehaviorSubject<InitData> _initDataConfig;
   final BehaviorSubject<String> _searchController;
   final BehaviorSubject<List<BookModel>> _bookResult;
+  final BehaviorSubject<SignUpModel> _registerUser;
 
   String _token = "";
 
@@ -40,7 +42,8 @@ class Bloc {
       : _repository = Repository(),
         _initDataConfig = BehaviorSubject<InitData>(),
         _searchController = BehaviorSubject<String>(),
-        _bookResult = BehaviorSubject<List<BookModel>>();
+        _bookResult = BehaviorSubject<List<BookModel>>(),
+        _registerUser = BehaviorSubject<SignUpModel>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -85,6 +88,8 @@ class Bloc {
           await getCredential(credential, context);
       final token = await userCredential.user!.getIdToken();
       _token = token;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString("token", token);
     } catch (e) {
       CustomFunction.loginErrorDialog(context, e.toString());
     }
@@ -106,7 +111,6 @@ class Bloc {
   Function(InitData) get changeInitDataConfig => _initDataConfig.sink.add;
 
   //SEARCH CONTROLLER
-
   Function(String) get searchBook => _searchController.sink.add;
   Stream<String> get booksList => _searchController.stream;
 
@@ -120,5 +124,18 @@ class Bloc {
   _fetchBooks(String title) {
     _repository.searchBook(
         title, _addToBookListStream, _bookResult.sink.addError);
+  }
+
+  //REGISTER USER
+  Stream<SignUpModel> get register => _registerUser.stream;
+  Function(String, String, String, String) get fetchRegister => _fetchRegister;
+
+  _addToRegisterStream(SignUpModel signUpModel) {
+    _registerUser.sink.add(signUpModel);
+  }
+
+  _fetchRegister(String email, String name, String photoURL, String uid) {
+    _repository.signUp(email, name, photoURL, uid, _addToRegisterStream,
+        _registerUser.sink.addError);
   }
 }

@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'package:bibliophile/bloc/provider.dart';
 import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/screen/Home/home.dart';
 import 'package:bibliophile/widgets/book_card.dart';
 import 'package:flutter/material.dart';
 
 class IntroScreen extends StatefulWidget {
-
   const IntroScreen({Key? key}) : super(key: key);
 
   @override
@@ -158,7 +158,12 @@ class _IntroScreenState extends State<IntroScreen> {
                 color: const Color.fromARGB(255, 101, 88, 245),
               ),
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Home()),
+                    );
+                  },
                   child: const Center(
                     child: Text('Later',
                         style: TextStyle(
