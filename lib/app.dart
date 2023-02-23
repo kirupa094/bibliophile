@@ -45,7 +45,7 @@ class NavigatorScreen extends StatelessWidget {
         builder: (context, AsyncSnapshot<InitData> snapshot) {
           if (snapshot.hasData) {
             if (snapshot.data?.token != '') {
-              return IntroScreen();
+              return IntroScreen(token: snapshot.data!.token);
             } else {
               return const LoginScreen();
             }
