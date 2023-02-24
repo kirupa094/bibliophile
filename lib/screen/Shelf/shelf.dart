@@ -42,7 +42,15 @@ class Shelf extends StatelessWidget {
             ),
           ),
         ),
-        body: BookCard(),
+        body: Container(
+          margin: const EdgeInsets.only(left: 16, right: 16, top: 20),
+          child: BookCard(
+              author: 'kiruba',
+              imgUrl:
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8KtZQxVnXOlVQ2iRXWxTEG8_rg4-s-zB5XQ&usqp=CAU',
+              title: 'Love One',
+              year: '2023'),
+        ),
       ),
     );
   }
