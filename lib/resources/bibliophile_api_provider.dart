@@ -13,26 +13,28 @@ class BibliophileApiProvider {
       : _client = Client(),
         _root = 'http://localhost:3001';
 
-  searchBook(String mobileNumber, String password, String language,
-      Function(BookModel) add, Function(Object) addError) async {
+  searchBook(String title, Function(List<BookModel>) add,
+      Function(Object) addError) async {
     try {
       Map<String, String> headers = {
         'Content-Type': 'application/json; charset=UTF-8',
       };
-      final response = await _client.post(
-        Uri.parse('$_root/api/auth/v1/$language/login'),
+      final response = await _client.get(
+        Uri.parse('$_root/book/search?query=$title'),
         headers: headers,
-        body: jsonEncode(<String, String>{
-          'mobile_number': mobileNumber,
-          'password': password,
-        }),
       );
 
       final result = json.decode(response.body);
+      if (response.statusCode == 201) {
+        List<BookModel> lst = [];
 
-      if (response.statusCode == 200) {
-        var book = (result);
-        add(BookModel.fromParsedJason(book));
+        var items = (result);
+        if (items != null) {
+          for (var item in items) {
+            lst.add(BookModel.fromParsedJason(item));
+          }
+        }
+        add(lst);
       } else {
         addError('${result['message']}');
       }
