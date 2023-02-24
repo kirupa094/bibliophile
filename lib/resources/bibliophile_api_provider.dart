@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/signup_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
 class BibliophileApiProvider {
@@ -25,7 +27,7 @@ class BibliophileApiProvider {
       );
 
       final result = json.decode(response.body);
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         List<BookModel> lst = [];
 
         var items = (result);
@@ -35,6 +37,34 @@ class BibliophileApiProvider {
           }
         }
         add(lst);
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
+
+  signUp(String email, String name, String photoURL, String uid,
+      Function(SignUpModel) add, Function(Object) addError) async {
+    add(SignUpModel.fromParsedJason({}));
+    try {
+      final response = await _client.post(
+        Uri.parse('$_root/user/signup'),
+        body: jsonEncode(<String, String>{
+          "email": email,
+          "name": name,
+          "photoURL": photoURL,
+          "uid": uid
+        }),
+      );
+
+      final result = json.decode(response.body);
+      if (response.statusCode == 200) {
+        var user = (result);
+        add(SignUpModel.fromParsedJason(user));
       } else {
         addError('${result['message']}');
       }

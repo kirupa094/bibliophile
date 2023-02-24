@@ -1,14 +1,21 @@
 import 'dart:convert';
-
 import 'package:bibliophile/bloc/provider.dart';
 import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/screen/Home/home.dart';
 import 'package:bibliophile/widgets/book_card.dart';
 import 'package:flutter/material.dart';
 
-class IntroScreen extends StatelessWidget {
-  IntroScreen({Key? key}) : super(key: key);
+class IntroScreen extends StatefulWidget {
+  const IntroScreen({Key? key}) : super(key: key);
+
+  @override
+  State<IntroScreen> createState() => _IntroScreenState();
+}
+
+class _IntroScreenState extends State<IntroScreen> {
   final TextEditingController _textController = TextEditingController();
+  bool click = false;
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
@@ -96,6 +103,9 @@ class IntroScreen extends StatelessWidget {
                               onPressed: () {
                                 FocusScope.of(context).unfocus();
                                 if (snapshot.hasData) {
+                                  setState(() {
+                                    click = true;
+                                  });
                                   bloc.fetchBooks(snapshot.data.toString());
                                 }
                               },
@@ -119,20 +129,23 @@ class IntroScreen extends StatelessWidget {
                 const SizedBox(
                   height: 20,
                 ),
-                Flexible(
-                  child: StreamBuilder<List<BookModel>>(
-                    stream: bloc.getBookList,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Text(snapshot.error.toString());
-                      }
-                      if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      return _buildList(snapshot.data, context);
-                    },
-                  ),
-                ),
+                click
+                    ? Flexible(
+                        child: StreamBuilder<List<BookModel>>(
+                          stream: bloc.getBookList,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text(snapshot.error.toString());
+                            }
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            return _buildList(snapshot.data, context);
+                          },
+                        ),
+                      )
+                    : const SizedBox.shrink(),
               ],
             ),
           ),
@@ -141,14 +154,22 @@ class IntroScreen extends StatelessWidget {
               padding: const EdgeInsets.only(left: 8, right: 8),
               height: 56,
               decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: const Color.fromARGB(255, 101, 88, 245),
-                  ),
+                borderRadius: BorderRadius.circular(5),
+                color: const Color.fromARGB(255, 101, 88, 245),
+              ),
               child: TextButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Home()),
+                    );
+                  },
                   child: const Center(
                     child: Text('Later',
-                        style: TextStyle(color: Colors.white,fontSize: 16,fontWeight: FontWeight.w600)),
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600)),
                   )),
             ),
           ]),
