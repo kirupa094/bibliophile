@@ -1,3 +1,4 @@
+import 'package:bibliophile/bloc/provider.dart';
 import 'package:bibliophile/screen/Profile/posted_posts.dart';
 import 'package:bibliophile/screen/Profile/saved_posts.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,9 @@ class Profile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of(context);
+    final userName = bloc!.getUserName();
+    final userImage = bloc.getUserImage();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -53,21 +57,24 @@ class Profile extends StatelessWidget {
               margin: const EdgeInsets.only(left: 16),
               child: Row(
                 children: <Widget>[
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 45,
-                    backgroundImage: NetworkImage(
-                        'https://as1.ftcdn.net/v2/jpg/03/46/83/96/1000_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg'),
+                    backgroundImage: NetworkImage(userImage),
                   ),
                   const SizedBox(
                     width: 10,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const <Widget>[
-                      Text('Your Name',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 20)),
-                      Text('Your Description', style: TextStyle(fontSize: 15)),
+                    children: [
+                      Text(
+                        userName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                      ),
                     ],
                   ),
                 ],

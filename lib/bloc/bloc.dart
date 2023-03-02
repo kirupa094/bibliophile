@@ -23,6 +23,8 @@ class Bloc {
   final BehaviorSubject<SignUpModel> _registerUser;
 
   String _token = "";
+  String _userImage = "";
+  String _userName = "";
 
   static final Bloc _bloc = Bloc._internal();
 
@@ -34,8 +36,24 @@ class Bloc {
     return _token;
   }
 
+  String getUserName() {
+    return _userName;
+  }
+
+  String getUserImage() {
+    return _userImage;
+  }
+
   setToken(String token) {
     _token = token;
+  }
+
+  setUserName(String userName) {
+    _userName = userName;
+  }
+
+  setUserImage(String userImage) {
+    _userImage = userImage;
   }
 
   Bloc._internal()
@@ -88,6 +106,8 @@ class Bloc {
           await getCredential(credential, context);
       final token = await userCredential.user!.getIdToken();
       _token = token;
+      _userImage = userCredential.user?.photoURL ?? '';
+      _userName = userCredential.user?.displayName ?? '';
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("token", token);
     } catch (e) {

@@ -1,7 +1,6 @@
 import 'package:bibliophile/bloc/provider.dart';
 import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/signup_model.dart';
-import 'package:bibliophile/screen/Home/home.dart';
 import 'package:bibliophile/util/constant.dart';
 import 'package:bibliophile/widgets/bottom_navigation_bar_menu.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -108,10 +107,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           final isNewUser =
                               userCredential.additionalUserInfo!.isNewUser;
                           if (userCredential.user != null) {
+                            bloc.setUserImage(
+                                userCredential.user?.photoURL ?? '');
+                            bloc.setUserName(
+                                userCredential.user?.displayName ?? '');
                             bloc.fetchRegister(
                                 userCredential.user?.email ?? '',
-                                userCredential.additionalUserInfo?.username ??
-                                    '',
+                                userCredential.user?.displayName ?? '',
                                 userCredential.user?.photoURL ?? '',
                                 userCredential.user!.uid);
                             Future.delayed(
