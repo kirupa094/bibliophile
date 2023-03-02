@@ -77,7 +77,7 @@ class BibliophileApiProvider {
 
   getShelf(String token, Function(ShelfBooksModel) add,
       Function(Object) addError) async {
-    add(ShelfBooksModel.fromParsedJason({}));
+    //add(ShelfBooksModel.fromParsedJason({}));
     try {
       Map<String, String> headers = {
         'Content-Type': 'application/json',

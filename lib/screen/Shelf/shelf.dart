@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:bibliophile/bloc/provider.dart';
 import 'package:bibliophile/model/book_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
+import 'package:bibliophile/util/constant.dart';
 import 'package:bibliophile/widgets/book_card.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,7 @@ class Shelf extends StatefulWidget {
 class _ShelfState extends State<Shelf> {
   final TextEditingController _textController = TextEditingController();
   bool click = false;
+  String errorMsg = '';
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
@@ -70,6 +72,7 @@ class _ShelfState extends State<Shelf> {
                     child: TextField(
                       controller: _textController,
                       decoration: InputDecoration(
+                        errorText: errorMsg != '' ? errorMsg : null,
                         contentPadding: const EdgeInsets.all(15.0),
                         filled: true,
                         fillColor: Colors.white,
@@ -90,6 +93,9 @@ class _ShelfState extends State<Shelf> {
                             }
                           },
                         ),
+                        errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: textWarning, width: 2),
+                        ),
                         enabledBorder: const OutlineInputBorder(
                           borderSide: BorderSide(
                               color: Color.fromARGB(255, 238, 238, 238),
@@ -104,11 +110,21 @@ class _ShelfState extends State<Shelf> {
                       onChanged: (value) {
                         if (value.isNotEmpty) {
                           if (value.length > 3) {
+                            setState(() {
+                              errorMsg = '';
+                            });
                             bloc.searchBook(value);
+                          } else {
+                            setState(() {
+                              click = false;
+                              errorMsg =
+                                  'Search Text Length Must Be Greater Than 3';
+                            });
                           }
                         } else {
                           setState(() {
                             click = false;
+                            errorMsg = '';
                           });
                         }
                       },
