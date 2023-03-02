@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/model/signup_model.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
 
 class BibliophileApiProvider {
@@ -17,12 +16,13 @@ class BibliophileApiProvider {
 
   searchBook(String title, Function(List<BookModel>) add,
       Function(Object) addError) async {
+    add([]);
     try {
       Map<String, String> headers = {
         'Content-Type': 'application/json; charset=UTF-8',
       };
       final response = await _client.get(
-        Uri.parse('$_root/book/search?query=$title'),
+        Uri.parse('$_root/book/search?key=$title'),
         headers: headers,
       );
 
@@ -65,6 +65,32 @@ class BibliophileApiProvider {
       if (response.statusCode == 200) {
         var user = (result);
         add(SignUpModel.fromParsedJason(user));
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
+
+  getShelf(String token, Function(ShelfBooksModel) add,
+      Function(Object) addError) async {
+    add(ShelfBooksModel.fromParsedJason({}));
+    try {
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        "Authorization": 'Bearer $token',
+      };
+      final response = await _client.get(
+        Uri.parse('$_root/shelf'),
+        headers: headers,
+      );
+
+      final result = json.decode(response.body);
+      if (response.statusCode == 200) {
+        add(ShelfBooksModel.fromParsedJason(result));
       } else {
         addError('${result['message']}');
       }

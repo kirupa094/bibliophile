@@ -1,5 +1,6 @@
 import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/model/signup_model.dart';
 import 'package:bibliophile/resources/repository.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +22,7 @@ class Bloc {
   final BehaviorSubject<String> _searchController;
   final BehaviorSubject<List<BookModel>> _bookResult;
   final BehaviorSubject<SignUpModel> _registerUser;
+  final BehaviorSubject<ShelfBooksModel> _shelfResult;
 
   String _token = "";
   String _userImage = "";
@@ -61,7 +63,8 @@ class Bloc {
         _initDataConfig = BehaviorSubject<InitData>(),
         _searchController = BehaviorSubject<String>(),
         _bookResult = BehaviorSubject<List<BookModel>>(),
-        _registerUser = BehaviorSubject<SignUpModel>();
+        _registerUser = BehaviorSubject<SignUpModel>(),
+        _shelfResult = BehaviorSubject<ShelfBooksModel>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -157,5 +160,21 @@ class Bloc {
   _fetchRegister(String email, String name, String photoURL, String uid) {
     _repository.signUp(email, name, photoURL, uid, _addToRegisterStream,
         _registerUser.sink.addError);
+  }
+
+  //SHELF
+  //GET SHELF BOOKS
+  Stream<ShelfBooksModel> get getShelfResult => _shelfResult.stream;
+  Function() get fetchShelf => _fetchShelf;
+
+  _addToShelfStream(ShelfBooksModel shelfBooksModel) {
+    _shelfResult.sink.add(shelfBooksModel);
+  }
+
+  _fetchShelf() {
+    if (_token != '') {
+      _repository.getShelf(
+          _token, _addToShelfStream, _shelfResult.sink.addError);
+    }
   }
 }

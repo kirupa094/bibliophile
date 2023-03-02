@@ -81,51 +81,52 @@ class _IntroScreenState extends State<IntroScreen> {
                   height: 15,
                 ),
                 StreamBuilder(
-                    stream: bloc!.booksList,
-                    builder: (context, snapshot) {
-                      return Container(
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                        ),
-                        child: TextField(
-                          controller: _textController,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.all(15.0),
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintStyle: const TextStyle(
-                                color: Color.fromARGB(255, 118, 118, 118),
-                                fontWeight: FontWeight.w400,
-                                fontSize: 16),
-                            hintText: "Search books by title,author",
-                            suffixIcon: IconButton(
-                              icon: const Icon(Icons.search),
-                              onPressed: () {
-                                FocusScope.of(context).unfocus();
-                                if (snapshot.hasData) {
-                                  setState(() {
-                                    click = true;
-                                  });
-                                  bloc.fetchBooks(snapshot.data.toString());
-                                }
-                              },
-                            ),
-                            enabledBorder: const OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Color.fromARGB(255, 238, 238, 238),
-                                  width: 2),
-                            ),
-                          ),
-                          onChanged: (value) {
-                            if (value.isNotEmpty) {
-                              if (value.length > 3) {
-                                bloc.searchBook(value);
+                  stream: bloc!.booksList,
+                  builder: (context, snapshot) {
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                      ),
+                      child: TextField(
+                        controller: _textController,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.all(15.0),
+                          filled: true,
+                          fillColor: Colors.white,
+                          hintStyle: const TextStyle(
+                              color: Color.fromARGB(255, 118, 118, 118),
+                              fontWeight: FontWeight.w400,
+                              fontSize: 16),
+                          hintText: "Search books by title,author",
+                          suffixIcon: IconButton(
+                            icon: const Icon(Icons.search),
+                            onPressed: () {
+                              FocusScope.of(context).unfocus();
+                              if (snapshot.hasData) {
+                                setState(() {
+                                  click = true;
+                                });
+                                bloc.fetchBooks(snapshot.data.toString());
                               }
-                            }
-                          },
+                            },
+                          ),
+                          enabledBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 238, 238, 238),
+                                width: 2),
+                          ),
                         ),
-                      );
-                    }),
+                        onChanged: (value) {
+                          if (value.isNotEmpty) {
+                            if (value.length > 3) {
+                              bloc.searchBook(value);
+                            }
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
                 const SizedBox(
                   height: 20,
                 ),
