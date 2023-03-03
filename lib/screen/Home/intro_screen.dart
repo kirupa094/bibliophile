@@ -112,40 +112,41 @@ class _IntroScreenState extends State<IntroScreen> {
                               }
                             },
                           ),
-                            errorBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(color: textWarning, width: 2),
-                        ),
+                          errorBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: textWarning, width: 2),
+                          ),
                           enabledBorder: const OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Color.fromARGB(255, 238, 238, 238),
                                 width: 2),
                           ),
-                           focusedBorder: const OutlineInputBorder(
-                          borderSide: BorderSide(
-                              color: Color.fromARGB(255, 238, 238, 238),
-                              width: 2),
-                        ),
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Color.fromARGB(255, 238, 238, 238),
+                                width: 2),
+                          ),
                         ),
                         onChanged: (value) {
                           if (value.isNotEmpty) {
-                          if (value.length > 3) {
-                            setState(() {
-                              errorMsg = '';
-                            });
-                            bloc.searchBook(value);
+                            if (value.length > 3) {
+                              setState(() {
+                                errorMsg = '';
+                              });
+                              bloc.searchBook(value);
+                            } else {
+                              setState(() {
+                                click = false;
+                                errorMsg =
+                                    'Search Text Length Must Be Greater Than 3';
+                              });
+                            }
                           } else {
                             setState(() {
                               click = false;
-                              errorMsg =
-                                  'Search Text Length Must Be Greater Than 3';
+                              errorMsg = '';
                             });
                           }
-                        } else {
-                          setState(() {
-                            click = false;
-                            errorMsg = '';
-                          });
-                        }
                         },
                       ),
                     );
@@ -154,7 +155,7 @@ class _IntroScreenState extends State<IntroScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                 click
+                click
                     ? Flexible(
                         child: StreamBuilder<List<BookModel>>(
                           stream: bloc.getBookList,
@@ -211,6 +212,7 @@ class _IntroScreenState extends State<IntroScreen> {
         itemCount: lst!.length,
         itemBuilder: (BuildContext ctx, index) {
           return BookCard(
+            id: lst[index].id,
             imgUrl: lst[index].thumbnail,
             title: lst[index].title,
             author: jsonEncode(lst[index].authors),

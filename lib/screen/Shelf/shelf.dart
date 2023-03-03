@@ -185,6 +185,7 @@ class _ShelfState extends State<Shelf> {
       itemCount: lst!.length,
       itemBuilder: (BuildContext ctx, index) {
         return BookCard(
+          id: lst[index].id,
           imgUrl: lst[index].thumbnail,
           title: lst[index].title,
           author: jsonEncode(lst[index].authors),
@@ -216,6 +217,7 @@ class _ShelfState extends State<Shelf> {
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
               return BookCard(
+                id: lst[index]?['_id'] ?? '89epDgAAQBAJ',
                 imgUrl: lst[index]?['cover'] ??
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8KtZQxVnXOlVQ2iRXWxTEG8_rg4-s-zB5XQ&usqp=CAU',
                 title: lst[index]?['title'] ?? 'Default',
@@ -233,23 +235,41 @@ class _ShelfState extends State<Shelf> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
+        if (shelfBooksModel!.readBooks.isNotEmpty)
+          SizedBox(
             height: 350,
-            child: customShelfColumn('Read Books', shelfBooksModel!.readBooks)),
+            child: customShelfColumn('Read Books', shelfBooksModel.readBooks),
+          ),
         const SizedBox(
           height: 20,
         ),
-        SizedBox(
+        if (shelfBooksModel.currentlyReadingBooks.isNotEmpty)
+          SizedBox(
             height: 350,
-            child: customShelfColumn(
-                'Currently Reading Books', shelfBooksModel.readBooks)),
+            child: customShelfColumn('Currently Reading Books',
+                shelfBooksModel.currentlyReadingBooks),
+          ),
         const SizedBox(
           height: 20,
         ),
-        SizedBox(
+        if (shelfBooksModel.toBeReadBooks.isNotEmpty)
+          SizedBox(
             height: 350,
             child: customShelfColumn(
-                'To Be Read Books', shelfBooksModel.readBooks)),
+                'To Be Read Books', shelfBooksModel.toBeReadBooks),
+          ),
+        if (shelfBooksModel.readBooks.isEmpty &&
+            shelfBooksModel.currentlyReadingBooks.isEmpty &&
+            shelfBooksModel.toBeReadBooks.isNotEmpty)
+          const Center(
+            child: Text(
+              'Your self is empty',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
       ],
     );
   }

@@ -6,12 +6,13 @@ class BookCard extends StatefulWidget {
   final String author;
   final String imgUrl;
   final String year;
+  final String id;
   const BookCard(
       {Key? key,
       required this.title,
       required this.author,
       required this.imgUrl,
-      required this.year})
+      required this.year, required this.id})
       : super(key: key);
 
   @override
@@ -126,6 +127,7 @@ class _BookCardState extends State<BookCard> {
                     setState(() {
                       dropdownValue = newValue;
                     });
+                    print(dropdownValue);
                   },
                   items: <String>['Read', 'To be read', 'Currently reading']
                       .map<DropdownMenuItem<String>>((String value) {
