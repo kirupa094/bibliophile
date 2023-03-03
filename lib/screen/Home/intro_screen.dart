@@ -16,6 +16,7 @@ class IntroScreen extends StatefulWidget {
 class _IntroScreenState extends State<IntroScreen> {
   final TextEditingController _textController = TextEditingController();
   bool click = false;
+  String errorMsg = '';
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
@@ -110,18 +111,40 @@ class _IntroScreenState extends State<IntroScreen> {
                               }
                             },
                           ),
+                            errorBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(color: textWarning, width: 2),
+                        ),
                           enabledBorder: const OutlineInputBorder(
                             borderSide: BorderSide(
                                 color: Color.fromARGB(255, 238, 238, 238),
                                 width: 2),
                           ),
+                           focusedBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 238, 238, 238),
+                              width: 2),
+                        ),
                         ),
                         onChanged: (value) {
                           if (value.isNotEmpty) {
-                            if (value.length > 3) {
-                              bloc.searchBook(value);
-                            }
+                          if (value.length > 3) {
+                            setState(() {
+                              errorMsg = '';
+                            });
+                            bloc.searchBook(value);
+                          } else {
+                            setState(() {
+                              click = false;
+                              errorMsg =
+                                  'Search Text Length Must Be Greater Than 3';
+                            });
                           }
+                        } else {
+                          setState(() {
+                            click = false;
+                            errorMsg = '';
+                          });
+                        }
                         },
                       ),
                     );
@@ -130,9 +153,11 @@ class _IntroScreenState extends State<IntroScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                click
-                    ? Flexible(
-                        child: StreamBuilder<List<BookModel>>(
+                Flexible(
+                //height: MediaQuery.of(context).size.height - 250,
+                child: SingleChildScrollView(
+                  child: click
+                      ? StreamBuilder<List<BookModel>>(
                           stream: bloc.getBookList,
                           builder: (context, snapshot) {
                             if (snapshot.hasError) {
@@ -144,8 +169,22 @@ class _IntroScreenState extends State<IntroScreen> {
                             }
                             return _buildList(snapshot.data, context);
                           },
+                        )
+                      : StreamBuilder<ShelfBooksModel>(
+                          stream: bloc.getShelfResult,
+                          builder: (context, snapshot) {
+                            if (snapshot.hasError) {
+                              return Text(snapshot.error.toString());
+                            }
+                            if (!snapshot.hasData) {
+                              return const Center(
+                                  child: CircularProgressIndicator());
+                            }
+                            return _buildShelf(snapshot.data, context);
+                          },
                         ),
-                      )
+                ),
+              ),
                     : const SizedBox.shrink(),
               ],
             ),
