@@ -100,4 +100,47 @@ class BibliophileApiProvider {
       addError(e);
     }
   }
+
+  updateShelfRequest(
+      String token,
+      String title,
+      String author,
+      String cover,
+      String year,
+      String id,
+      String category,
+      Function(ShelfBooksModel) add,
+      Function(Object) addError) async {
+    add(ShelfBooksModel.fromParsedJason({}));
+    try {
+      Map<String, String> headers = {
+        'Content-Type': 'application/json',
+        "Authorization": 'Bearer $token',
+      };
+      final response = await _client.put(
+        Uri.parse('$_root/shelf/:$category'),
+        headers: headers,
+        body: jsonEncode(
+          <String, String>{
+            "title": title,
+            "author": author,
+            "cover": cover,
+            "year": year,
+            "id": id
+          },
+        ),
+      );
+
+      final result = json.decode(response.body);
+      if (response.statusCode == 201) {
+        add(ShelfBooksModel.fromParsedJason(result));
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
 }

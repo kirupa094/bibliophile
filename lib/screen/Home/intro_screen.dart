@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'package:bibliophile/bloc/provider.dart';
-import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
-import 'package:bibliophile/screen/Home/home.dart';
 import 'package:bibliophile/widgets/book_card.dart';
 import 'package:bibliophile/util/constant.dart';
+import 'package:bibliophile/widgets/bottom_navigation_bar_menu.dart';
 import 'package:flutter/material.dart';
 
 class IntroScreen extends StatefulWidget {
@@ -187,7 +186,9 @@ class _IntroScreenState extends State<IntroScreen> {
                   onPressed: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const Home()),
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const BottomNavigationBarMenu()),
                     );
                   },
                   child: const Center(

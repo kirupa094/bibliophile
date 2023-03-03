@@ -21,4 +21,18 @@ class Repository {
       String token, Function(ShelfBooksModel) add, Function(Object) addError) {
     _bibliophileApiProvider.getShelf(token, add, addError);
   }
+
+  void updateShelfRequest(
+      String token,
+      String title,
+      String author,
+      String cover,
+      String year,
+      String id,
+      String category,
+      Function(ShelfBooksModel) add,
+      Function(Object) addError) {
+    _bibliophileApiProvider.updateShelfRequest(
+        token, title, author, cover, year, id, category, add, addError);
+  }
 }

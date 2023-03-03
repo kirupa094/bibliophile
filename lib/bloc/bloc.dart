@@ -23,6 +23,7 @@ class Bloc {
   final BehaviorSubject<List<BookModel>> _bookResult;
   final BehaviorSubject<SignUpModel> _registerUser;
   final BehaviorSubject<ShelfBooksModel> _shelfResult;
+  final BehaviorSubject<ShelfBooksModel> _addShelfResult;
 
   String _token = "";
   String _userImage = "";
@@ -64,7 +65,8 @@ class Bloc {
         _searchController = BehaviorSubject<String>(),
         _bookResult = BehaviorSubject<List<BookModel>>(),
         _registerUser = BehaviorSubject<SignUpModel>(),
-        _shelfResult = BehaviorSubject<ShelfBooksModel>();
+        _shelfResult = BehaviorSubject<ShelfBooksModel>(),
+        _addShelfResult = BehaviorSubject<ShelfBooksModel>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -175,6 +177,29 @@ class Bloc {
     if (_token != '') {
       _repository.getShelf(
           _token, _addToShelfStream, _shelfResult.sink.addError);
+    }
+  }
+
+  //ADD BOOKS TO SHELF
+  Stream<ShelfBooksModel> get updateShelfResult => _addShelfResult.stream;
+  Function(String, String, String, String, String, String) get updateShelf =>
+      _updateShelf;
+
+  _updateShelfStream(ShelfBooksModel shelfBooksModel) {
+    _addShelfResult.sink.add(shelfBooksModel);
+  }
+
+  _updateShelf(
+    String title,
+    String author,
+    String cover,
+    String year,
+    String id,
+    String category,
+  ) {
+    if (_token != '') {
+      _repository.updateShelfRequest(_token, title, author, cover, year, id,
+          category, _updateShelfStream, _addShelfResult.sink.addError);
     }
   }
 }

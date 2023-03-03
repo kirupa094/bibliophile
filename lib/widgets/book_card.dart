@@ -1,3 +1,5 @@
+import 'package:bibliophile/bloc/provider.dart';
+import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/util/constant.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +14,8 @@ class BookCard extends StatefulWidget {
       required this.title,
       required this.author,
       required this.imgUrl,
-      required this.year, required this.id})
+      required this.year,
+      required this.id})
       : super(key: key);
 
   @override
@@ -23,6 +26,7 @@ class _BookCardState extends State<BookCard> {
   String? dropdownValue;
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of(context);
     return Container(
       width: MediaQuery.of(context).size.width / 2,
       height: 250,
@@ -126,8 +130,22 @@ class _BookCardState extends State<BookCard> {
                   onChanged: (String? newValue) {
                     setState(() {
                       dropdownValue = newValue;
+                      if (dropdownValue == 'Read') {
+                        bloc!.updateShelf(widget.title, widget.author,
+                            widget.imgUrl, widget.year, widget.id, 'read');
+                      } else if (dropdownValue == 'To be read') {
+                        bloc!.updateShelf(widget.title, widget.author,
+                            widget.imgUrl, widget.year, widget.id, 'toBeRead');
+                      } else {
+                        bloc!.updateShelf(
+                            widget.title,
+                            widget.author,
+                            widget.imgUrl,
+                            widget.year,
+                            widget.id,
+                            'currentlyReading');
+                      }
                     });
-                    print(dropdownValue);
                   },
                   items: <String>['Read', 'To be read', 'Currently reading']
                       .map<DropdownMenuItem<String>>((String value) {
@@ -139,6 +157,19 @@ class _BookCardState extends State<BookCard> {
                 ),
               ),
             ),
+            StreamBuilder<ShelfBooksModel>(
+              stream: bloc!.updateShelfResult,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('error');
+                }
+                if (snapshot.hasData) {
+                  bloc.fetchShelf();
+                  return const SizedBox.shrink();
+                }
+                return const SizedBox.shrink();
+              },
+            )
           ],
         ),
       ),
