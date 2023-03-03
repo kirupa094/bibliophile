@@ -4,6 +4,7 @@ import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
 import 'package:bibliophile/screen/Home/home.dart';
 import 'package:bibliophile/widgets/book_card.dart';
+import 'package:bibliophile/util/constant.dart';
 import 'package:flutter/material.dart';
 
 class IntroScreen extends StatefulWidget {
