@@ -153,11 +153,9 @@ class _IntroScreenState extends State<IntroScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                Flexible(
-                //height: MediaQuery.of(context).size.height - 250,
-                child: SingleChildScrollView(
-                  child: click
-                      ? StreamBuilder<List<BookModel>>(
+                 click
+                    ? Flexible(
+                        child: StreamBuilder<List<BookModel>>(
                           stream: bloc.getBookList,
                           builder: (context, snapshot) {
                             if (snapshot.hasError) {
@@ -169,22 +167,8 @@ class _IntroScreenState extends State<IntroScreen> {
                             }
                             return _buildList(snapshot.data, context);
                           },
-                        )
-                      : StreamBuilder<ShelfBooksModel>(
-                          stream: bloc.getShelfResult,
-                          builder: (context, snapshot) {
-                            if (snapshot.hasError) {
-                              return Text(snapshot.error.toString());
-                            }
-                            if (!snapshot.hasData) {
-                              return const Center(
-                                  child: CircularProgressIndicator());
-                            }
-                            return _buildShelf(snapshot.data, context);
-                          },
                         ),
-                ),
-              ),
+                      )
                     : const SizedBox.shrink(),
               ],
             ),
