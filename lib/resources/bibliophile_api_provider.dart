@@ -52,17 +52,12 @@ class BibliophileApiProvider {
     add(SignUpModel.fromParsedJason({}));
     try {
       final response = await _client.post(
-        Uri.parse('$_root/user/signup'),
-        body: jsonEncode(<String, String>{
-          "email": email,
-          "name": name,
-          "photoURL": photoURL,
-          "uid": uid
-        }),
+        Uri.parse('$_root/auth/signup'),
+        body: {"email": email, "name": name, "photoURL": photoURL, "uid": uid},
       );
 
       final result = json.decode(response.body);
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         var user = (result);
         add(SignUpModel.fromParsedJason(user));
       } else {
@@ -90,7 +85,11 @@ class BibliophileApiProvider {
 
       final result = json.decode(response.body);
       if (response.statusCode == 200) {
-        add(ShelfBooksModel.fromParsedJason(result));
+        if (result == null) {
+          add(ShelfBooksModel.fromParsedJason({}));
+        } else {
+          add(ShelfBooksModel.fromParsedJason(result));
+        }
       } else {
         addError('${result['message']}');
       }
@@ -104,7 +103,7 @@ class BibliophileApiProvider {
   updateShelfRequest(
       String token,
       String title,
-      String author,
+      List<String> author,
       String cover,
       String year,
       String id,
@@ -112,16 +111,17 @@ class BibliophileApiProvider {
       Function(ShelfBooksModel) add,
       Function(Object) addError) async {
     add(ShelfBooksModel.fromParsedJason({}));
+
     try {
       Map<String, String> headers = {
         'Content-Type': 'application/json',
         "Authorization": 'Bearer $token',
       };
       final response = await _client.put(
-        Uri.parse('$_root/shelf/:$category'),
+        Uri.parse('$_root/shelf/$category'),
         headers: headers,
         body: jsonEncode(
-          <String, String>{
+          <String, dynamic>{
             "title": title,
             "author": author,
             "cover": cover,

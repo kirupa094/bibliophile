@@ -131,15 +131,25 @@ class _BookCardState extends State<BookCard> {
                     setState(() {
                       dropdownValue = newValue;
                       if (dropdownValue == 'Read') {
-                        bloc!.updateShelf(widget.title, widget.author,
-                            widget.imgUrl, widget.year, widget.id, 'read');
+                        bloc!.updateShelf(
+                            widget.title,
+                            widget.author.split(', '),
+                            widget.imgUrl,
+                            widget.year,
+                            widget.id,
+                            'read');
                       } else if (dropdownValue == 'To be read') {
-                        bloc!.updateShelf(widget.title, widget.author,
-                            widget.imgUrl, widget.year, widget.id, 'toBeRead');
+                        bloc!.updateShelf(
+                            widget.title,
+                            widget.author.split(', '),
+                            widget.imgUrl,
+                            widget.year,
+                            widget.id,
+                            'toBeRead');
                       } else {
                         bloc!.updateShelf(
                             widget.title,
-                            widget.author,
+                            widget.author.split(', '),
                             widget.imgUrl,
                             widget.year,
                             widget.id,

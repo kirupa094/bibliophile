@@ -107,6 +107,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           final isNewUser =
                               userCredential.additionalUserInfo!.isNewUser;
                           if (userCredential.user != null) {
+                            bloc.setToken(token);
                             bloc.setUserImage(
                                 userCredential.user?.photoURL ?? '');
                             bloc.setUserName(
@@ -168,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: CircularProgressIndicator(
                     valueColor: AlwaysStoppedAnimation<Color>(textPrimary)),
               );
-            } else if (snapshot.hasError) {
+            } else if (snapshot.hasError && snapshot.error != null) {
               return AlertDialog(
                   titlePadding:
                       const EdgeInsets.only(left: 20, right: 10, top: 20),

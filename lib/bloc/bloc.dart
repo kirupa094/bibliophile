@@ -182,8 +182,8 @@ class Bloc {
 
   //ADD BOOKS TO SHELF
   Stream<ShelfBooksModel> get updateShelfResult => _addShelfResult.stream;
-  Function(String, String, String, String, String, String) get updateShelf =>
-      _updateShelf;
+  Function(String, List<String>, String, String, String, String)
+      get updateShelf => _updateShelf;
 
   _updateShelfStream(ShelfBooksModel shelfBooksModel) {
     _addShelfResult.sink.add(shelfBooksModel);
@@ -191,7 +191,7 @@ class Bloc {
 
   _updateShelf(
     String title,
-    String author,
+    List<String> author,
     String cover,
     String year,
     String id,

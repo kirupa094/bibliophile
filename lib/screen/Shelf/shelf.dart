@@ -162,7 +162,7 @@ class _ShelfState extends State<Shelf> {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            return _buildShelf(snapshot.data, context);
+                            return SelectableText(bloc.getSavedUserToken());
                           },
                         ),
                 ),
@@ -260,7 +260,7 @@ class _ShelfState extends State<Shelf> {
           ),
         if (shelfBooksModel.readBooks.isEmpty &&
             shelfBooksModel.currentlyReadingBooks.isEmpty &&
-            shelfBooksModel.toBeReadBooks.isNotEmpty)
+            shelfBooksModel.toBeReadBooks.isEmpty)
           const Center(
             child: Text(
               'Your self is empty',
