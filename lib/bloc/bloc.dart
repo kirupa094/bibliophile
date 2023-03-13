@@ -182,7 +182,7 @@ class Bloc {
 
   //ADD BOOKS TO SHELF
   Stream<ShelfBooksModel> get updateShelfResult => _addShelfResult.stream;
-  Function(String, List<String>, String, String, String, String)
+  Function(String, List<dynamic>, String, String, String, String)
       get updateShelf => _updateShelf;
 
   _updateShelfStream(ShelfBooksModel shelfBooksModel) {
@@ -191,7 +191,7 @@ class Bloc {
 
   _updateShelf(
     String title,
-    List<String> author,
+    List<dynamic> author,
     String cover,
     String year,
     String id,

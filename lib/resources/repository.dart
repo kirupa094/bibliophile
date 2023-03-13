@@ -25,7 +25,7 @@ class Repository {
   void updateShelfRequest(
       String token,
       String title,
-      List<String> author,
+      List<dynamic> author,
       String cover,
       String year,
       String id,

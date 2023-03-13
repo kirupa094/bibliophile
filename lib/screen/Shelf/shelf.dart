@@ -162,7 +162,7 @@ class _ShelfState extends State<Shelf> {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            return SelectableText(bloc.getSavedUserToken());
+                            return _buildShelf(snapshot.data, context);
                           },
                         ),
                 ),
@@ -188,7 +188,7 @@ class _ShelfState extends State<Shelf> {
           id: lst[index].id,
           imgUrl: lst[index].thumbnail,
           title: lst[index].title,
-          author: jsonEncode(lst[index].authors),
+          author: lst[index].authors,
           year: lst[index].publishedDate,
         );
       },
@@ -199,9 +199,12 @@ class _ShelfState extends State<Shelf> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            title,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ),
         const SizedBox(
           height: 20,
@@ -221,7 +224,7 @@ class _ShelfState extends State<Shelf> {
                 imgUrl: lst[index]?['cover'] ??
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8KtZQxVnXOlVQ2iRXWxTEG8_rg4-s-zB5XQ&usqp=CAU',
                 title: lst[index]?['title'] ?? 'Default',
-                author: jsonEncode(lst[index]?['author'] ?? ['empty']),
+                author: (lst[index]?['author'] ?? ['empty']),
                 year: '2023',
               );
             },

@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 class BookCard extends StatefulWidget {
   final String title;
-  final String author;
+  final List<dynamic> author;
   final String imgUrl;
   final String year;
   final String id;
@@ -133,7 +133,7 @@ class _BookCardState extends State<BookCard> {
                       if (dropdownValue == 'Read') {
                         bloc!.updateShelf(
                             widget.title,
-                            widget.author.split(', '),
+                            widget.author,
                             widget.imgUrl,
                             widget.year,
                             widget.id,
@@ -141,7 +141,7 @@ class _BookCardState extends State<BookCard> {
                       } else if (dropdownValue == 'To be read') {
                         bloc!.updateShelf(
                             widget.title,
-                            widget.author.split(', '),
+                            widget.author,
                             widget.imgUrl,
                             widget.year,
                             widget.id,
@@ -149,7 +149,7 @@ class _BookCardState extends State<BookCard> {
                       } else {
                         bloc!.updateShelf(
                             widget.title,
-                            widget.author.split(', '),
+                            widget.author,
                             widget.imgUrl,
                             widget.year,
                             widget.id,

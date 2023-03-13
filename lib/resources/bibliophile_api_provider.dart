@@ -103,7 +103,7 @@ class BibliophileApiProvider {
   updateShelfRequest(
       String token,
       String title,
-      List<String> author,
+      List<dynamic> author,
       String cover,
       String year,
       String id,
@@ -117,7 +117,7 @@ class BibliophileApiProvider {
         'Content-Type': 'application/json',
         "Authorization": 'Bearer $token',
       };
-      final response = await _client.put(
+      final response = await _client.patch(
         Uri.parse('$_root/shelf/$category'),
         headers: headers,
         body: jsonEncode(
@@ -132,6 +132,7 @@ class BibliophileApiProvider {
       );
 
       final result = json.decode(response.body);
+      print(result);
       if (response.statusCode == 201) {
         add(ShelfBooksModel.fromParsedJason(result));
       } else {

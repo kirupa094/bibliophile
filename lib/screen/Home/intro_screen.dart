@@ -216,7 +216,7 @@ class _IntroScreenState extends State<IntroScreen> {
             id: lst[index].id,
             imgUrl: lst[index].thumbnail,
             title: lst[index].title,
-            author: jsonEncode(lst[index].authors),
+            author: (lst[index].authors),
             year: lst[index].publishedDate,
           );
         });
