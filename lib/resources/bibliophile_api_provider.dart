@@ -84,6 +84,7 @@ class BibliophileApiProvider {
       );
 
       final result = json.decode(response.body);
+
       if (response.statusCode == 200) {
         if (result == null) {
           add(ShelfBooksModel.fromParsedJason({}));
