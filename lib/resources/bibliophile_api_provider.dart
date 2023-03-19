@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/create_post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/model/signup_model.dart';
 import 'package:http/http.dart';
@@ -133,9 +134,42 @@ class BibliophileApiProvider {
       );
 
       final result = json.decode(response.body);
-      print(result);
       if (response.statusCode == 201) {
         add(ShelfBooksModel.fromParsedJason(result));
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
+
+  createPost(String token, CreatePostModel createPostModel,
+      Function(Map<String, dynamic>) add, Function(Object) addError) async {
+    add({});
+    try {
+      Map<String, String> headers = {
+        "Authorization": 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+      final response = await _client.post(
+        Uri.parse('$_root/posts/'),
+        headers: headers,
+        body: jsonEncode(<String, dynamic>{
+          "book_id": createPostModel.bookId,
+          "book_title": createPostModel.bookTitle,
+          "book_cover": createPostModel.bookCover,
+          "title": createPostModel.title,
+          "message": createPostModel.msg,
+          "name": createPostModel.name
+        }),
+      );
+
+      final result = json.decode(response.body);
+      if (response.statusCode == 201) {
+        add(result);
       } else {
         addError('${result['message']}');
       }

@@ -1,4 +1,5 @@
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/create_post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/model/signup_model.dart';
 import 'package:bibliophile/resources/bibliophile_api_provider.dart';
@@ -34,5 +35,10 @@ class Repository {
       Function(Object) addError) {
     _bibliophileApiProvider.updateShelfRequest(
         token, title, author, cover, year, id, category, add, addError);
+  }
+
+  void createPost(String token, CreatePostModel createPostModel,
+      Function(Map<String, dynamic>) add, Function(Object) addError) {
+    _bibliophileApiProvider.createPost(token, createPostModel, add, addError);
   }
 }

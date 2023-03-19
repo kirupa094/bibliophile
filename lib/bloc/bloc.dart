@@ -1,5 +1,6 @@
 import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/create_post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/model/signup_model.dart';
 import 'package:bibliophile/resources/repository.dart';
@@ -24,6 +25,7 @@ class Bloc {
   final BehaviorSubject<SignUpModel> _registerUser;
   final BehaviorSubject<ShelfBooksModel> _shelfResult;
   final BehaviorSubject<ShelfBooksModel> _addShelfResult;
+  final BehaviorSubject<Map<String, dynamic>> _createPostResult;
 
   String _token = "";
   String _userImage = "";
@@ -66,7 +68,8 @@ class Bloc {
         _bookResult = BehaviorSubject<List<BookModel>>(),
         _registerUser = BehaviorSubject<SignUpModel>(),
         _shelfResult = BehaviorSubject<ShelfBooksModel>(),
-        _addShelfResult = BehaviorSubject<ShelfBooksModel>();
+        _addShelfResult = BehaviorSubject<ShelfBooksModel>(),
+        _createPostResult = BehaviorSubject<Map<String, dynamic>>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -200,6 +203,23 @@ class Bloc {
     if (_token != '') {
       _repository.updateShelfRequest(_token, title, author, cover, year, id,
           category, _updateShelfStream, _addShelfResult.sink.addError);
+    }
+  }
+
+  //POST
+
+  //Create Post
+  Stream<Map<String, dynamic>> get createPostOutput => _createPostResult.stream;
+  Function(CreatePostModel) get postCreatePostOutput => _postCreatePostOutput;
+
+  _addToCreatePostOutputStream(Map<String, dynamic> lst) {
+    _createPostResult.sink.add(lst);
+  }
+
+  _postCreatePostOutput(CreatePostModel createPostModel) {
+    if (_token != '') {
+      _repository.createPost(_token, createPostModel,
+          _addToCreatePostOutputStream, _createPostResult.sink.addError);
     }
   }
 }
