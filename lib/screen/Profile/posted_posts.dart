@@ -9,15 +9,15 @@ class PostedPosts extends StatelessWidget {
     return SingleChildScrollView(
       child: Column(
         children: const [
-          PostCard(),
-          SizedBox(
-            height: 10,
-          ),
-          PostCard(),
-          SizedBox(
-            height: 10,
-          ),
-          PostCard(),
+          // PostCard(),
+          // SizedBox(
+          //   height: 10,
+          // ),
+          // PostCard(),
+          // SizedBox(
+          //   height: 10,
+          // ),
+          // PostCard(),
         ],
       ),
     );

@@ -1,8 +1,8 @@
 import 'package:bibliophile/bloc/provider.dart';
 import 'package:bibliophile/model/create_post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
+import 'package:bibliophile/screen/Post/post.dart';
 import 'package:bibliophile/util/constant.dart';
-import 'package:bibliophile/widgets/post_card.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatefulWidget {
@@ -16,6 +16,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
+    bloc!.fetchAllPosts();
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -58,7 +59,7 @@ class _HomeState extends State<Home> {
           child: const Icon(Icons.add),
         ),
         body: StreamBuilder<Map<String, dynamic>>(
-          stream: bloc!.createPostOutput,
+          stream: bloc.createPostOutput,
           builder: (context, snapshot) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
               final msg = snapshot.data!['message'] as String;
@@ -69,10 +70,11 @@ class _HomeState extends State<Home> {
                     content: Text(msg),
                     duration: const Duration(seconds: 1),
                   ));
+                  bloc.clearPostCreatePostOutput();
                 },
               );
             }
-            return const PostCard();
+            return const Post();
           },
         ),
       ),

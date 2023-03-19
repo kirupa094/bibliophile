@@ -1,5 +1,6 @@
 import 'package:bibliophile/model/book_model.dart';
 import 'package:bibliophile/model/create_post_model.dart';
+import 'package:bibliophile/model/post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/model/signup_model.dart';
 import 'package:bibliophile/resources/bibliophile_api_provider.dart';
@@ -41,4 +42,10 @@ class Repository {
       Function(Map<String, dynamic>) add, Function(Object) addError) {
     _bibliophileApiProvider.createPost(token, createPostModel, add, addError);
   }
+
+  void getAllPosts(
+      String token, Function(List<PostModel>) add, Function(Object) addError) {
+    _bibliophileApiProvider.getAllPosts(token, add, addError);
+  }
+
 }

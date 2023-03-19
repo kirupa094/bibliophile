@@ -1,6 +1,7 @@
 import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
 import 'package:bibliophile/model/create_post_model.dart';
+import 'package:bibliophile/model/post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/model/signup_model.dart';
 import 'package:bibliophile/resources/repository.dart';
@@ -26,6 +27,7 @@ class Bloc {
   final BehaviorSubject<ShelfBooksModel> _shelfResult;
   final BehaviorSubject<ShelfBooksModel> _addShelfResult;
   final BehaviorSubject<Map<String, dynamic>> _createPostResult;
+  final BehaviorSubject<List<PostModel>> _getAllPostResult;
 
   String _token = "";
   String _userImage = "";
@@ -69,7 +71,8 @@ class Bloc {
         _registerUser = BehaviorSubject<SignUpModel>(),
         _shelfResult = BehaviorSubject<ShelfBooksModel>(),
         _addShelfResult = BehaviorSubject<ShelfBooksModel>(),
-        _createPostResult = BehaviorSubject<Map<String, dynamic>>();
+        _createPostResult = BehaviorSubject<Map<String, dynamic>>(),
+        _getAllPostResult = BehaviorSubject<List<PostModel>>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -220,6 +223,25 @@ class Bloc {
     if (_token != '') {
       _repository.createPost(_token, createPostModel,
           _addToCreatePostOutputStream, _createPostResult.sink.addError);
+    }
+  }
+
+  void clearPostCreatePostOutput() {
+    _createPostResult.sink.add({});
+  }
+
+  //Get All Posts
+  Stream<List<PostModel>> get getAllPosts => _getAllPostResult.stream;
+  Function() get fetchAllPosts => _fetchAllPosts;
+
+  _addToGetAllPostStream(List<PostModel> lst) {
+    _getAllPostResult.sink.add(lst);
+  }
+
+  _fetchAllPosts() {
+    if (_token != '') {
+      _repository.getAllPosts(
+          _token, _addToGetAllPostStream, _getAllPostResult.sink.addError);
     }
   }
 }

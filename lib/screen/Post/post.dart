@@ -1,3 +1,6 @@
+import 'package:bibliophile/bloc/provider.dart';
+import 'package:bibliophile/model/post_model.dart';
+import 'package:bibliophile/widgets/post_card.dart';
 import 'package:flutter/material.dart';
 
 class Post extends StatelessWidget {
@@ -5,13 +8,36 @@ class Post extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text(
-          'Post',
-          style: TextStyle(color: Colors.black),
-        ),
-      ),
+    final bloc = Provider.of(context);
+    return StreamBuilder<List<PostModel>>(
+      stream: bloc!.getAllPosts,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text(snapshot.error.toString()));
+        }
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        return _buildList(snapshot.data, context);
+      },
+    );
+  }
+
+  _buildList(List<PostModel>? lst, BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: lst!.length,
+      itemBuilder: (BuildContext ctx, index) {
+        return PostCard(
+          bookTitle: lst[index].bookTitle,
+          comments: lst[index].comments,
+          createdAt: lst[index].createdAt,
+          id: lst[index].id,
+          likes: lst[index].likes,
+          msg: lst[index].message,
+          name: lst[index].name,
+        );
+      },
     );
   }
 }

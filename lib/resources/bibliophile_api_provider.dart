@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:bibliophile/model/book_model.dart';
 import 'package:bibliophile/model/create_post_model.dart';
+import 'package:bibliophile/model/post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/model/signup_model.dart';
 import 'package:http/http.dart';
@@ -170,6 +171,39 @@ class BibliophileApiProvider {
       final result = json.decode(response.body);
       if (response.statusCode == 201) {
         add(result);
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
+
+  getAllPosts(String token, Function(List<PostModel>) add,
+      Function(Object) addError) async {
+    add([]);
+    try {
+      Map<String, String> headers = {
+        "Authorization": 'Bearer $token',
+      };
+      final response = await _client.get(
+        Uri.parse('$_root/posts/'),
+        headers: headers,
+      );
+
+      final result = json.decode(response.body);
+      if (response.statusCode == 200) {
+        List<PostModel> lst = [];
+
+        var items = (result['data']);
+        if (items != null) {
+          for (var item in items) {
+            lst.add(PostModel.fromParsedJson(item));
+          }
+        }
+        add(lst);
       } else {
         addError('${result['message']}');
       }

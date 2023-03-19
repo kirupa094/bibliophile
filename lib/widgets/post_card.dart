@@ -1,9 +1,24 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 class PostCard extends StatefulWidget {
-  const PostCard({Key? key}) : super(key: key);
+  final String name;
+  final String bookTitle;
+  final DateTime createdAt;
+  final String msg;
+  final List likes;
+  final List comments;
+  final String id;
+
+  const PostCard(
+      {Key? key,
+      required this.name,
+      required this.bookTitle,
+      required this.createdAt,
+      required this.msg,
+      required this.likes,
+      required this.comments,
+      required this.id})
+      : super(key: key);
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -13,8 +28,6 @@ class _PostCardState extends State<PostCard> {
   bool _isExpanded = false;
   bool isLiked = false;
   bool isSaved = false;
-  String text =
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.";
 
   void toggleLike() {
     setState(() {
@@ -26,6 +39,27 @@ class _PostCardState extends State<PostCard> {
     setState(() {
       isSaved = !isSaved;
     });
+  }
+
+  String formatRelativeTime(DateTime timestamp) {
+    final now = DateTime.now();
+    final diff = now.difference(timestamp);
+
+    if (diff.inDays > 1) {
+      return '${diff.inDays} days ago';
+    } else if (diff.inDays == 1) {
+      return 'yesterday';
+    } else if (diff.inHours > 1) {
+      return '${diff.inHours} hours ago';
+    } else if (diff.inHours == 1) {
+      return '1 hour ago';
+    } else if (diff.inMinutes > 1) {
+      return '${diff.inMinutes} minutes ago';
+    } else if (diff.inMinutes == 1) {
+      return '1 minute ago';
+    } else {
+      return 'just now';
+    }
   }
 
   @override
@@ -43,17 +77,17 @@ class _PostCardState extends State<PostCard> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Text(
-                    'John on Crime and punishment',
-                    style: TextStyle(
+                    '${widget.name} on ${widget.bookTitle}',
+                    style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w700,
                         fontSize: 17),
                   ),
                   Text(
-                    '3h ago',
-                    style: TextStyle(
+                    formatRelativeTime(widget.createdAt),
+                    style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w600,
                         fontSize: 14),
@@ -70,7 +104,7 @@ class _PostCardState extends State<PostCard> {
                 ),
                 child: SingleChildScrollView(
                   child: Text(
-                    text,
+                    widget.msg,
                     style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
