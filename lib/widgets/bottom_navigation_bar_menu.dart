@@ -1,5 +1,4 @@
 import 'package:bibliophile/screen/Home/home.dart';
-import 'package:bibliophile/screen/Post/post.dart';
 import 'package:bibliophile/screen/Profile/profile.dart';
 import 'package:bibliophile/screen/Shelf/shelf.dart';
 import 'package:flutter/material.dart';

@@ -7,10 +7,11 @@ class Post extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-          child: Text(
-        'Post',
-        style: TextStyle(color: Colors.black),
-      )),
+        child: Text(
+          'Post',
+          style: TextStyle(color: Colors.black),
+        ),
+      ),
     );
   }
 }

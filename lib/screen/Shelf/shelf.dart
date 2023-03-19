@@ -220,7 +220,7 @@ class _ShelfState extends State<Shelf> {
             shrinkWrap: true,
             itemBuilder: (BuildContext context, int index) {
               return BookCard(
-                id: lst[index]?['_id'] ?? '89epDgAAQBAJ',
+                id: lst[index]?['id'] ?? '89epDgAAQBAJ',
                 imgUrl: lst[index]?['cover'] ??
                     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8KtZQxVnXOlVQ2iRXWxTEG8_rg4-s-zB5XQ&usqp=CAU',
                 title: lst[index]?['title'] ?? 'Default',

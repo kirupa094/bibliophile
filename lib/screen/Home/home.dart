@@ -9,7 +9,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -47,6 +46,11 @@ class _HomeState extends State<Home> {
               ],
             ),
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {},
+          backgroundColor: const Color.fromARGB(255, 101, 88, 245),
+          child: const Icon(Icons.add),
         ),
         body: const PostCard(),
       ),
