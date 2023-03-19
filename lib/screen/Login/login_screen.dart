@@ -112,6 +112,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 userCredential.user?.photoURL ?? '');
                             bloc.setUserName(
                                 userCredential.user?.displayName ?? '');
+                            bloc.setUserId(
+                                userCredential.user!.uid);
                             bloc.fetchRegister(
                                 userCredential.user?.email ?? '',
                                 userCredential.user?.displayName ?? '',

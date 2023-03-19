@@ -24,7 +24,10 @@ class Post extends StatelessWidget {
   }
 
   _buildList(List<PostModel>? lst, BuildContext context) {
-    return ListView.builder(
+    return ListView.separated(
+      separatorBuilder: (context, index) => const SizedBox(
+        height: 10,
+      ),
       shrinkWrap: true,
       itemCount: lst!.length,
       itemBuilder: (BuildContext ctx, index) {

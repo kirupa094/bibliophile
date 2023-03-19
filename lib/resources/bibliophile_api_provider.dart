@@ -213,4 +213,37 @@ class BibliophileApiProvider {
       addError(e);
     }
   }
+
+  getAllPostsByCreator(String token,String creatorId, Function(List<PostModel>) add,
+      Function(Object) addError) async {
+    add([]);
+    try {
+      Map<String, String> headers = {
+        "Authorization": 'Bearer $token',
+      };
+      final response = await _client.get(
+        Uri.parse('$_root/posts/'),
+        headers: headers,
+      );
+
+      final result = json.decode(response.body);
+      if (response.statusCode == 200) {
+        List<PostModel> lst = [];
+
+        var items = (result['data']);
+        if (items != null) {
+          for (var item in items) {
+            lst.add(PostModel.fromParsedJson(item));
+          }
+        }
+        add(lst);
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
 }

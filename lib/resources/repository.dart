@@ -48,4 +48,9 @@ class Repository {
     _bibliophileApiProvider.getAllPosts(token, add, addError);
   }
 
+  void getAllPostsByCreator(String token, String creatorId,
+      Function(List<PostModel>) add, Function(Object) addError) {
+    _bibliophileApiProvider.getAllPostsByCreator(
+        token, creatorId, add, addError);
+  }
 }

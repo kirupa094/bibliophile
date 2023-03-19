@@ -28,10 +28,12 @@ class Bloc {
   final BehaviorSubject<ShelfBooksModel> _addShelfResult;
   final BehaviorSubject<Map<String, dynamic>> _createPostResult;
   final BehaviorSubject<List<PostModel>> _getAllPostResult;
+  final BehaviorSubject<List<PostModel>> _getAllPostByCreatorResult;
 
   String _token = "";
   String _userImage = "";
   String _userName = "";
+  String _userId = "";
 
   static final Bloc _bloc = Bloc._internal();
 
@@ -51,6 +53,10 @@ class Bloc {
     return _userImage;
   }
 
+  String getUserId() {
+    return _userId;
+  }
+
   setToken(String token) {
     _token = token;
   }
@@ -63,6 +69,10 @@ class Bloc {
     _userImage = userImage;
   }
 
+  setUserId(String userId) {
+    _userId = userId;
+  }
+
   Bloc._internal()
       : _repository = Repository(),
         _initDataConfig = BehaviorSubject<InitData>(),
@@ -72,7 +82,8 @@ class Bloc {
         _shelfResult = BehaviorSubject<ShelfBooksModel>(),
         _addShelfResult = BehaviorSubject<ShelfBooksModel>(),
         _createPostResult = BehaviorSubject<Map<String, dynamic>>(),
-        _getAllPostResult = BehaviorSubject<List<PostModel>>();
+        _getAllPostResult = BehaviorSubject<List<PostModel>>(),
+        _getAllPostByCreatorResult = BehaviorSubject<List<PostModel>>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -119,6 +130,7 @@ class Bloc {
       _token = token;
       _userImage = userCredential.user?.photoURL ?? '';
       _userName = userCredential.user?.displayName ?? '';
+      _userId = userCredential.user!.uid;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("token", token);
     } catch (e) {
@@ -242,6 +254,22 @@ class Bloc {
     if (_token != '') {
       _repository.getAllPosts(
           _token, _addToGetAllPostStream, _getAllPostResult.sink.addError);
+    }
+  }
+
+  //Get All Posts By Creator
+  Stream<List<PostModel>> get getAllPostsByCreator =>
+      _getAllPostByCreatorResult.stream;
+  Function(String) get fetchAllPostsByCreator => _fetchAllPostsByCreator;
+
+  _addToGetAllPostByCreatorStream(List<PostModel> lst) {
+    _getAllPostByCreatorResult.sink.add(lst);
+  }
+
+  _fetchAllPostsByCreator(String creatorId) {
+    if (_token != '') {
+      _repository.getAllPostsByCreator(_token, creatorId,
+          _addToGetAllPostByCreatorStream, _getAllPostResult.sink.addError);
     }
   }
 }
