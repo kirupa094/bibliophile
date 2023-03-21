@@ -222,7 +222,7 @@ class BibliophileApiProvider {
         "Authorization": 'Bearer $token',
       };
       final response = await _client.get(
-        Uri.parse('$_root/posts/'),
+        Uri.parse('$_root/posts/creator?creator=$creatorId'),
         headers: headers,
       );
 

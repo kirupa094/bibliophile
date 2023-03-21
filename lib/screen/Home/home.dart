@@ -70,6 +70,7 @@ class _HomeState extends State<Home> {
                     content: Text(msg),
                     duration: const Duration(seconds: 1),
                   ));
+                  bloc.fetchAllPosts();
                   bloc.clearPostCreatePostOutput();
                 },
               );
