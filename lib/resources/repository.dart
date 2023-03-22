@@ -54,8 +54,13 @@ class Repository {
         token, creatorId, add, addError);
   }
 
-  void savePost(String token, String postId,
-      Function(Map<String, dynamic>) add, Function(Object) addError) {
+  void savePost(String token, String postId, Function(Map<String, dynamic>) add,
+      Function(Object) addError) {
     _bibliophileApiProvider.savePost(token, postId, add, addError);
+  }
+
+  void getAllSavedPosts(
+      String token, Function(List<PostModel>) add, Function(Object) addError) {
+    _bibliophileApiProvider.getAllSavedPosts(token, add, addError);
   }
 }

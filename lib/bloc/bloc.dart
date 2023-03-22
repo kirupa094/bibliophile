@@ -29,6 +29,7 @@ class Bloc {
   final BehaviorSubject<List<PostModel>> _getAllPostResult;
   final BehaviorSubject<List<PostModel>> _getAllPostByCreatorResult;
   final BehaviorSubject<Map<String, dynamic>> _savePostResult;
+  final BehaviorSubject<List<PostModel>> _getAllSavePostByCreatorResult;
 
   String _token = "";
   String _userImage = "";
@@ -84,7 +85,8 @@ class Bloc {
         _createPostResult = BehaviorSubject<Map<String, dynamic>>(),
         _getAllPostResult = BehaviorSubject<List<PostModel>>(),
         _getAllPostByCreatorResult = BehaviorSubject<List<PostModel>>(),
-        _savePostResult = BehaviorSubject<Map<String, dynamic>>();
+        _savePostResult = BehaviorSubject<Map<String, dynamic>>(),
+        _getAllSavePostByCreatorResult = BehaviorSubject<List<PostModel>>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -293,6 +295,22 @@ class Bloc {
     if (_token != '') {
       _repository.savePost(_token, postId, _addToSavePostOutputStream,
           _savePostResult.sink.addError);
+    }
+  }
+
+  //Get All Saved Posts By Creator
+  Stream<List<PostModel>> get getAllSavedPostsByCreator =>
+      _getAllSavePostByCreatorResult.stream;
+  Function() get fetchAllSavePostsByCreator => _fetchAllSavePostsByCreator;
+
+  _addToGetAllSavePostByCreatorStream(List<PostModel> lst) {
+    _getAllSavePostByCreatorResult.sink.add(lst);
+  }
+
+  _fetchAllSavePostsByCreator() {
+    if (_token != '') {
+      _repository.getAllSavedPosts(_token, _addToGetAllSavePostByCreatorStream,
+          _getAllSavePostByCreatorResult.sink.addError);
     }
   }
 }
