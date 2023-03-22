@@ -307,4 +307,33 @@ class BibliophileApiProvider {
       addError(e);
     }
   }
+
+  likePost(String token, String postId, String userName, String userImage,
+      Function(Map<String, dynamic>) add, Function(Object) addError) async {
+    add({});
+    try {
+      Map<String, String> headers = {
+        "Authorization": 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+      final response = await _client.patch(
+        Uri.parse('$_root/posts/$postId/likePost'),
+        headers: headers,
+        body: jsonEncode(
+            <String, dynamic>{"username": userName, "photoURL": userImage}),
+      );
+
+      final result = json.decode(response.body);
+
+      if (response.statusCode == 201) {
+        add(result);
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
 }

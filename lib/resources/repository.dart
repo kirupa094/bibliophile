@@ -63,4 +63,10 @@ class Repository {
       String token, Function(List<PostModel>) add, Function(Object) addError) {
     _bibliophileApiProvider.getAllSavedPosts(token, add, addError);
   }
+
+  void likePost(String token, String postId, String userName, String userImage,
+      Function(Map<String, dynamic>) add, Function(Object) addError) {
+    _bibliophileApiProvider.likePost(
+        token, postId, userName, userImage, add, addError);
+  }
 }

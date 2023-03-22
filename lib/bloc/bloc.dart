@@ -30,6 +30,7 @@ class Bloc {
   final BehaviorSubject<List<PostModel>> _getAllPostByCreatorResult;
   final BehaviorSubject<Map<String, dynamic>> _savePostResult;
   final BehaviorSubject<List<PostModel>> _getAllSavePostByCreatorResult;
+  final BehaviorSubject<Map<String, dynamic>> _likePostResult;
 
   String _token = "";
   String _userImage = "";
@@ -86,7 +87,8 @@ class Bloc {
         _getAllPostResult = BehaviorSubject<List<PostModel>>(),
         _getAllPostByCreatorResult = BehaviorSubject<List<PostModel>>(),
         _savePostResult = BehaviorSubject<Map<String, dynamic>>(),
-        _getAllSavePostByCreatorResult = BehaviorSubject<List<PostModel>>();
+        _getAllSavePostByCreatorResult = BehaviorSubject<List<PostModel>>(),
+        _likePostResult = BehaviorSubject<Map<String, dynamic>>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -311,6 +313,29 @@ class Bloc {
     if (_token != '') {
       _repository.getAllSavedPosts(_token, _addToGetAllSavePostByCreatorStream,
           _getAllSavePostByCreatorResult.sink.addError);
+    }
+  }
+
+  //Like Post
+  Stream<Map<String, dynamic>> get likePost => _likePostResult.stream;
+  Function(String, String, String) get likePostOutput => _likePostOutput;
+
+  void clearLikePostOutput() {
+    _likePostResult.sink.add({});
+  }
+
+  _addToLikePostOutputStream(Map<String, dynamic> lst) {
+    _likePostResult.sink.add(lst);
+  }
+
+  _likePostOutput(
+    String postId,
+    String userName,
+    String userImage,
+  ) {
+    if (_token != '') {
+      _repository.likePost(_token, postId, userName, userImage,
+          _addToLikePostOutputStream, _likePostResult.sink.addError);
     }
   }
 }

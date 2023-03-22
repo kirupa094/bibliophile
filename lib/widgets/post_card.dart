@@ -76,6 +76,14 @@ class _PostCardState extends State<PostCard> {
           isSaved = true;
         });
       }
+      for (var i = 0; i < widget.likes.length; i++) {
+        if (widget.likes[i]['uid'] == bloc.getUserId()) {
+          setState(() {
+            isLiked = true;
+          });
+          break;
+        }
+      }
     });
   }
 
@@ -160,12 +168,15 @@ class _PostCardState extends State<PostCard> {
                         icon: isLiked
                             ? const Icon(Icons.favorite)
                             : const Icon(Icons.favorite_border),
-                        onPressed: toggleLike,
-                        color: isLiked ? Colors.red : null,
+                        onPressed: () {
+                          bloc!.likePostOutput(widget.id, bloc.getUserName(),
+                              bloc.getUserImage());
+                        },
+                        color: isLiked ? Colors.blue : null,
                       ),
-                      const Text(
-                        'Like',
-                        style: TextStyle(
+                      Text(
+                        '${widget.likes.length} Like',
+                        style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
                             fontSize: 14),
@@ -224,7 +235,6 @@ class _PostCardState extends State<PostCard> {
                           duration: const Duration(seconds: 1),
                         ));
                         toggleSave();
-                        //bloc.fetchAllPosts();
                         bloc.clearSavePostOutput();
                       },
                     );
@@ -233,7 +243,25 @@ class _PostCardState extends State<PostCard> {
                   }
                   return const SizedBox.shrink();
                 },
-              )
+              ),
+              StreamBuilder<Map<String, dynamic>>(
+                stream: bloc.likePost,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    final msg = snapshot.data!['message'] as String;
+                    Future.delayed(
+                      const Duration(microseconds: 500),
+                      () async {
+                        toggleLike();
+                        bloc.clearLikePostOutput();
+                      },
+                    );
+
+                    return const SizedBox.shrink();
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
             ],
           ),
         ),
