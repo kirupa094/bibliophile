@@ -53,4 +53,9 @@ class Repository {
     _bibliophileApiProvider.getAllPostsByCreator(
         token, creatorId, add, addError);
   }
+
+  void savePost(String token, String postId,
+      Function(Map<String, dynamic>) add, Function(Object) addError) {
+    _bibliophileApiProvider.savePost(token, postId, add, addError);
+  }
 }

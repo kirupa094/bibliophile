@@ -18,6 +18,17 @@ class Post extends StatelessWidget {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
+        if (snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              'Empty posts',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+        }
         return _buildList(snapshot.data, context);
       },
     );
@@ -39,6 +50,7 @@ class Post extends StatelessWidget {
           likes: lst[index].likes,
           msg: lst[index].message,
           name: lst[index].name,
+          saves: lst[index].saves,
         );
       },
     );

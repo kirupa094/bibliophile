@@ -214,8 +214,8 @@ class BibliophileApiProvider {
     }
   }
 
-  getAllPostsByCreator(String token,String creatorId, Function(List<PostModel>) add,
-      Function(Object) addError) async {
+  getAllPostsByCreator(String token, String creatorId,
+      Function(List<PostModel>) add, Function(Object) addError) async {
     add([]);
     try {
       Map<String, String> headers = {
@@ -246,4 +246,30 @@ class BibliophileApiProvider {
       addError(e);
     }
   }
-}
+
+ savePost(String token, String postId,
+      Function(Map<String, dynamic>) add, Function(Object) addError) async {
+    add({});
+    try {
+      Map<String, String> headers = {
+        "Authorization": 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+      final response = await _client.post(
+        Uri.parse('$_root/posts/$postId'),
+        headers: headers,
+      );
+
+      final result = json.decode(response.body);
+      if (response.statusCode == 201) {
+        add(result);
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
+ }

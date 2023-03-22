@@ -1,3 +1,4 @@
+import 'package:bibliophile/bloc/provider.dart';
 import 'package:flutter/material.dart';
 
 class PostCard extends StatefulWidget {
@@ -7,6 +8,7 @@ class PostCard extends StatefulWidget {
   final String msg;
   final List likes;
   final List comments;
+  final List saves;
   final String id;
 
   const PostCard(
@@ -17,7 +19,8 @@ class PostCard extends StatefulWidget {
       required this.msg,
       required this.likes,
       required this.comments,
-      required this.id})
+      required this.id,
+      required this.saves})
       : super(key: key);
 
   @override
@@ -64,6 +67,7 @@ class _PostCardState extends State<PostCard> {
 
   @override
   Widget build(BuildContext context) {
+    final bloc = Provider.of(context);
     return SingleChildScrollView(
       child: Card(
         shape: const RoundedRectangleBorder(
@@ -176,9 +180,17 @@ class _PostCardState extends State<PostCard> {
                       IconButton(
                         icon: isSaved
                             ? const Icon(Icons.bookmark)
-                            : const Icon(Icons.bookmark_border),
-                        onPressed: toggleSave,
-                        color: isSaved ? Colors.blue : null,
+                            : widget.saves.contains(bloc!.getUserId())
+                                ? const Icon(Icons.bookmark)
+                                : const Icon(Icons.bookmark_border),
+                        onPressed: () {
+                          bloc!.savePostOutput(widget.id);
+                        },
+                        color: isSaved
+                            ? Colors.blue
+                            : widget.saves.contains(bloc!.getUserId())
+                                ? Colors.blue
+                                : null,
                       ),
                       const Text(
                         'Save',
@@ -191,6 +203,29 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ],
               ),
+              StreamBuilder<Map<String, dynamic>>(
+                stream: bloc!.savePost,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    final msg = snapshot.data!['message'] as String;
+                    Future.delayed(
+                      const Duration(microseconds: 500),
+                      () async {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(msg),
+                          duration: const Duration(seconds: 1),
+                        ));
+                        toggleSave();
+                        bloc.fetchAllPosts();
+                        bloc.clearSavePostOutput();
+                      },
+                    );
+
+                    return const SizedBox.shrink();
+                  }
+                  return const SizedBox.shrink();
+                },
+              )
             ],
           ),
         ),

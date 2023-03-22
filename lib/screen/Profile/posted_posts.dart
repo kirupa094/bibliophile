@@ -19,6 +19,17 @@ class PostedPosts extends StatelessWidget {
         if (!snapshot.hasData) {
           return const Center(child: CircularProgressIndicator());
         }
+        if (snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text(
+              'You did not post yet',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          );
+        }
         return _buildList(snapshot.data, context);
       },
     );
@@ -40,6 +51,7 @@ class PostedPosts extends StatelessWidget {
           likes: lst[index].likes,
           msg: lst[index].message,
           name: lst[index].name,
+          saves:lst[index].saves,
         );
       },
     );

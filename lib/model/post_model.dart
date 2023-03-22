@@ -1,6 +1,7 @@
 class PostModel {
   final List likes;
   final List comments;
+  final List saves;
   final DateTime createdAt;
   final String id;
   final String bookId;
@@ -22,5 +23,6 @@ class PostModel {
         creatorId = result['creator'] ?? '',
         likes = result['likes'] ?? [],
         comments = result['comments'] ?? [],
+        saves = result['saves'] ?? [],
         createdAt = DateTime.parse(result['createdAt']).toLocal();
 }
