@@ -13,9 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class InitData {
   final String token;
-  InitData({
-    this.token = "",
-  });
+  final String userId;
+  InitData({this.token = "", this.userId = ""});
 }
 
 class Bloc {
@@ -132,7 +131,7 @@ class Bloc {
       _token = token;
       _userImage = userCredential.user?.photoURL ?? '';
       _userName = userCredential.user?.displayName ?? '';
-      _userId = userCredential.user!.uid;
+      // _userId = userCredential.user!.uid;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("token", token);
     } catch (e) {
@@ -145,10 +144,13 @@ class Bloc {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     _initDataConfig.sink.add(InitData(
       token: prefs.getString('token') ?? "",
+      userId: prefs.getString('userId') ?? "",
     ));
 
     String? token = prefs.getString('token');
+    String? userId = prefs.getString('userId');
     _token = token ?? '';
+    _userId = userId ?? '';
   }
 
   //INIT DATA

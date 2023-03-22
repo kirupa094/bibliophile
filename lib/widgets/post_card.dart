@@ -66,6 +66,20 @@ class _PostCardState extends State<PostCard> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bloc = Provider.of(context);
+      if (widget.saves.contains(bloc!.getUserId())) {
+        setState(() {
+          isSaved = true;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
     return SingleChildScrollView(
@@ -180,17 +194,11 @@ class _PostCardState extends State<PostCard> {
                       IconButton(
                         icon: isSaved
                             ? const Icon(Icons.bookmark)
-                            : widget.saves.contains(bloc!.getUserId())
-                                ? const Icon(Icons.bookmark)
-                                : const Icon(Icons.bookmark_border),
+                            : const Icon(Icons.bookmark_border),
                         onPressed: () {
                           bloc!.savePostOutput(widget.id);
                         },
-                        color: isSaved
-                            ? Colors.blue
-                            : widget.saves.contains(bloc!.getUserId())
-                                ? Colors.blue
-                                : null,
+                        color: isSaved ? Colors.blue : null,
                       ),
                       const Text(
                         'Save',
@@ -216,7 +224,7 @@ class _PostCardState extends State<PostCard> {
                           duration: const Duration(seconds: 1),
                         ));
                         toggleSave();
-                        bloc.fetchAllPosts();
+                        //bloc.fetchAllPosts();
                         bloc.clearSavePostOutput();
                       },
                     );

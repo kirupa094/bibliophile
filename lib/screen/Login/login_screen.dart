@@ -17,9 +17,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  _signIn(String token, bool isNewUser) async {
+  _signIn(
+    String token,
+    bool isNewUser,
+    String userId,
+  ) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("token", token);
+    prefs.setString("userId", userId);
     _navigateHome(token, isNewUser);
   }
 
@@ -112,8 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 userCredential.user?.photoURL ?? '');
                             bloc.setUserName(
                                 userCredential.user?.displayName ?? '');
-                            bloc.setUserId(
-                                userCredential.user!.uid);
+                            bloc.setUserId(userCredential.user!.uid);
                             bloc.fetchRegister(
                                 userCredential.user?.email ?? '',
                                 userCredential.user?.displayName ?? '',
@@ -122,8 +126,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             Future.delayed(
                               const Duration(microseconds: 500),
                               () async {
-                                _showProgressBar(
-                                    context, bloc, token, isNewUser);
+                                _showProgressBar(context, bloc, token,
+                                    isNewUser, userCredential.user!.uid);
                               },
                             );
                           }
@@ -149,8 +153,8 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _showProgressBar(
-      BuildContext rootContext, Bloc bloc, String token, bool isNewUser) async {
+  Future<void> _showProgressBar(BuildContext rootContext, Bloc bloc,
+      String token, bool isNewUser, String userId) async {
     return showDialog<void>(
       context: rootContext,
       barrierDismissible: false,
@@ -163,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Future.delayed(
                   const Duration(microseconds: 500),
                   () async {
-                    _signIn(token, isNewUser);
+                    _signIn(token, isNewUser, userId);
                   },
                 );
               }
@@ -221,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: const Text('OK',
                           style: TextStyle(color: textSecondary, fontSize: 14)),
                       onPressed: () {
-                        _signIn(token, isNewUser);
+                        _signIn(token, isNewUser,userId);
                       },
                     )
                   ]);
