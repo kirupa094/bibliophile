@@ -336,4 +336,43 @@ class BibliophileApiProvider {
       addError(e);
     }
   }
+
+  commentPost(
+      String token,
+      String postId,
+      String userName,
+      String userImage,
+      String comment,
+      Function(Map<String, dynamic>) add,
+      Function(Object) addError) async {
+    add({});
+    try {
+      Map<String, String> headers = {
+        "Authorization": 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+      final response = await _client.post(
+        Uri.parse('$_root/posts/$postId/commentPost'),
+        headers: headers,
+        body: jsonEncode(<String, dynamic>{
+          "comment": comment,
+          "username": userName,
+          "photoURL": userImage,
+          "postedAt": DateTime.now().toString()
+        }),
+      );
+
+      final result = json.decode(response.body);
+
+      if (response.statusCode == 201) {
+        add(result);
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
 }

@@ -69,4 +69,16 @@ class Repository {
     _bibliophileApiProvider.likePost(
         token, postId, userName, userImage, add, addError);
   }
+
+  void commentPost(
+      String token,
+      String postId,
+      String userName,
+      String userImage,
+      String comment,
+      Function(Map<String, dynamic>) add,
+      Function(Object) addError) {
+    _bibliophileApiProvider.commentPost(
+        token, postId, userName, userImage, comment, add, addError);
+  }
 }

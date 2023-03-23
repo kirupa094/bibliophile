@@ -1,4 +1,5 @@
 import 'package:bibliophile/bloc/provider.dart';
+import 'package:bibliophile/util/constant.dart';
 import 'package:flutter/material.dart';
 
 class PostCard extends StatefulWidget {
@@ -31,11 +32,21 @@ class _PostCardState extends State<PostCard> {
   bool _isExpanded = false;
   bool isLiked = false;
   bool isSaved = false;
+  int likeCount = 0;
 
   void toggleLike() {
     setState(() {
       isLiked = !isLiked;
     });
+    if (isLiked) {
+      setState(() {
+        likeCount = likeCount + 1;
+      });
+    } else {
+      setState(() {
+        likeCount = likeCount - 1;
+      });
+    }
   }
 
   void toggleSave() {
@@ -84,7 +95,135 @@ class _PostCardState extends State<PostCard> {
           break;
         }
       }
+      setState(() {
+        likeCount = widget.likes.length;
+      });
     });
+  }
+
+  Future<void> _commentBox(BuildContext context, String userName, String postId,
+      Bloc bloc, List lst) {
+    final TextEditingController _textController = TextEditingController();
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "$userName' Post",
+                style: const TextStyle(color: Colors.black),
+              ),
+              IconButton(
+                icon: const Icon(Icons.close),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          ),
+          contentPadding: const EdgeInsets.only(left: 10, top: 10),
+          content: Scaffold(
+            backgroundColor: Colors.white,
+            body: SingleChildScrollView(
+              child: lst.isNotEmpty
+                  ? ListView.separated(
+                      separatorBuilder: (context, index) => const SizedBox(
+                        height: 8,
+                      ),
+                      shrinkWrap: true,
+                      itemCount: lst.length,
+                      itemBuilder: (BuildContext ctx, index) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              height: 30,
+                              width: 30,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: NetworkImage(lst[index]['photoURL']),
+                                    fit: BoxFit.cover,
+                                  )),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: const BoxDecoration(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8)),
+                                  color: Color.fromARGB(255, 170, 170, 170)),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    lst[index]['username'],
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  const SizedBox(
+                                    height: 2,
+                                  ),
+                                  Text(lst[index]['comment'],
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.w400)),
+                                ],
+                              ),
+                            )
+                          ],
+                        );
+                      },
+                    )
+                  : const SizedBox.shrink(),
+            ),
+            bottomNavigationBar: Container(
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              child: TextField(
+                controller: _textController,
+                decoration: InputDecoration(
+                  contentPadding: const EdgeInsets.all(15.0),
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintStyle: const TextStyle(
+                      color: Color.fromARGB(255, 118, 118, 118),
+                      fontWeight: FontWeight.w400,
+                      fontSize: 16),
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: () {
+                      if (_textController.text != '') {
+                        bloc.commentPostOutput(postId, bloc.getUserName(),
+                            bloc.getUserImage(), _textController.text);
+                        bloc.fetchAllPosts();
+                      }
+                      FocusScope.of(context).unfocus();
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                  errorBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: textWarning, width: 2),
+                  ),
+                  enabledBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Color.fromARGB(255, 238, 238, 238), width: 2),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Color.fromARGB(255, 238, 238, 238), width: 2),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -175,7 +314,11 @@ class _PostCardState extends State<PostCard> {
                         color: isLiked ? Colors.blue : null,
                       ),
                       Text(
-                        '${widget.likes.length} Like',
+                        likeCount > 1
+                            ? '$likeCount Likes'
+                            : likeCount == 1
+                                ? '$likeCount Like'
+                                : 'Like',
                         style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
@@ -188,11 +331,16 @@ class _PostCardState extends State<PostCard> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.comment),
-                        onPressed: () {},
+                        onPressed: () => _commentBox(context, widget.name,
+                            widget.id, bloc!, widget.comments),
                       ),
-                      const Text(
-                        'Comment',
-                        style: TextStyle(
+                      Text(
+                        widget.comments.length > 1
+                            ? '${widget.comments.length} Comments'
+                            : widget.comments.length == 1
+                                ? '${widget.comments.length} Comment'
+                                : 'Comment',
+                        style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
                             fontSize: 14),
@@ -254,6 +402,23 @@ class _PostCardState extends State<PostCard> {
                       () async {
                         toggleLike();
                         bloc.clearLikePostOutput();
+                      },
+                    );
+
+                    return const SizedBox.shrink();
+                  }
+                  return const SizedBox.shrink();
+                },
+              ),
+              StreamBuilder<Map<String, dynamic>>(
+                stream: bloc.commentPost,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                    final msg = snapshot.data!['message'] as String;
+                    Future.delayed(
+                      const Duration(microseconds: 500),
+                      () async {
+                        bloc.clearCommentPostOutput();
                       },
                     );
 

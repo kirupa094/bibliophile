@@ -31,6 +31,7 @@ class Bloc {
   final BehaviorSubject<Map<String, dynamic>> _savePostResult;
   final BehaviorSubject<List<PostModel>> _getAllSavePostByCreatorResult;
   final BehaviorSubject<Map<String, dynamic>> _likePostResult;
+  final BehaviorSubject<Map<String, dynamic>> _commentPostResult;
 
   String _token = "";
   String _userImage = "";
@@ -88,7 +89,8 @@ class Bloc {
         _getAllPostByCreatorResult = BehaviorSubject<List<PostModel>>(),
         _savePostResult = BehaviorSubject<Map<String, dynamic>>(),
         _getAllSavePostByCreatorResult = BehaviorSubject<List<PostModel>>(),
-        _likePostResult = BehaviorSubject<Map<String, dynamic>>();
+        _likePostResult = BehaviorSubject<Map<String, dynamic>>(),
+        _commentPostResult = BehaviorSubject<Map<String, dynamic>>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -336,6 +338,27 @@ class Bloc {
     if (_token != '') {
       _repository.likePost(_token, postId, userName, userImage,
           _addToLikePostOutputStream, _likePostResult.sink.addError);
+    }
+  }
+
+  //Comment Post
+  Stream<Map<String, dynamic>> get commentPost => _commentPostResult.stream;
+  Function(String, String, String, String) get commentPostOutput =>
+      _commentPostOutput;
+
+  void clearCommentPostOutput() {
+    _commentPostResult.sink.add({});
+  }
+
+  _addToCommentPostOutputStream(Map<String, dynamic> lst) {
+    _commentPostResult.sink.add(lst);
+  }
+
+  _commentPostOutput(
+      String postId, String userName, String userImage, String comment) {
+    if (_token != '') {
+      _repository.commentPost(_token, postId, userName, userImage, comment,
+          _addToCommentPostOutputStream, _commentPostResult.sink.addError);
     }
   }
 }
