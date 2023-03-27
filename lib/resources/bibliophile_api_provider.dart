@@ -55,7 +55,12 @@ class BibliophileApiProvider {
     try {
       final response = await _client.post(
         Uri.parse('$_root/auth/signup'),
-        body: {"email": email, "username": name, "photoURL": photoURL, "uid": uid},
+        body: {
+          "email": email,
+          "username": name,
+          "photoURL": photoURL,
+          "uid": uid
+        },
       );
 
       final result = json.decode(response.body);

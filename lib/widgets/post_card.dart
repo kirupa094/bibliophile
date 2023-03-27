@@ -34,7 +34,7 @@ class _PostCardState extends State<PostCard> {
   bool isSaved = false;
   int likeCount = 0;
 
-  void toggleLike() {
+  void toggleLike(Bloc bloc) {
     setState(() {
       isLiked = !isLiked;
     });
@@ -47,12 +47,14 @@ class _PostCardState extends State<PostCard> {
         likeCount = likeCount - 1;
       });
     }
+    bloc.fetchAllPosts();
   }
 
-  void toggleSave() {
+  void toggleSave(Bloc bloc) {
     setState(() {
       isSaved = !isSaved;
     });
+    bloc.fetchAllPosts();
   }
 
   String formatRelativeTime(DateTime timestamp) {
@@ -79,26 +81,6 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final bloc = Provider.of(context);
-      if (widget.saves.contains(bloc!.getUserId())) {
-        setState(() {
-          isSaved = true;
-        });
-      }
-      for (var i = 0; i < widget.likes.length; i++) {
-        if (widget.likes[i]['uid'] == bloc.getUserId()) {
-          setState(() {
-            isLiked = true;
-          });
-          break;
-        }
-      }
-      setState(() {
-        likeCount = widget.likes.length;
-      });
-    });
   }
 
   Future<void> _commentBox(BuildContext context, String userName, String postId,
@@ -106,6 +88,7 @@ class _PostCardState extends State<PostCard> {
     final TextEditingController _textController = TextEditingController();
     return showDialog<void>(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           title: Row(
@@ -229,6 +212,22 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
+    if (widget.saves.contains(bloc!.getUserId())) {
+      setState(() {
+        isSaved = true;
+      });
+    }
+    for (var i = 0; i < widget.likes.length; i++) {
+      if (widget.likes[i]['uid'] == bloc.getUserId()) {
+        setState(() {
+          isLiked = true;
+        });
+        break;
+      }
+    }
+    setState(() {
+      likeCount = widget.likes.length;
+    });
     return SingleChildScrollView(
       child: Card(
         shape: const RoundedRectangleBorder(
@@ -238,6 +237,7 @@ class _PostCardState extends State<PostCard> {
           width: double.infinity,
           padding: const EdgeInsets.all(10),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -270,6 +270,7 @@ class _PostCardState extends State<PostCard> {
                 child: SingleChildScrollView(
                   child: Text(
                     widget.msg,
+                    textAlign: TextAlign.left,
                     style: const TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.w500,
@@ -308,7 +309,7 @@ class _PostCardState extends State<PostCard> {
                             ? const Icon(Icons.favorite)
                             : const Icon(Icons.favorite_border),
                         onPressed: () {
-                          bloc!.likePostOutput(widget.id, bloc.getUserName(),
+                          bloc.likePostOutput(widget.id, bloc.getUserName(),
                               bloc.getUserImage());
                         },
                         color: isLiked ? Colors.blue : null,
@@ -332,7 +333,7 @@ class _PostCardState extends State<PostCard> {
                       IconButton(
                         icon: const Icon(Icons.comment),
                         onPressed: () => _commentBox(context, widget.name,
-                            widget.id, bloc!, widget.comments),
+                            widget.id, bloc, widget.comments),
                       ),
                       Text(
                         widget.comments.length > 1
@@ -355,7 +356,7 @@ class _PostCardState extends State<PostCard> {
                             ? const Icon(Icons.bookmark)
                             : const Icon(Icons.bookmark_border),
                         onPressed: () {
-                          bloc!.savePostOutput(widget.id);
+                          bloc.savePostOutput(widget.id);
                         },
                         color: isSaved ? Colors.blue : null,
                       ),
@@ -371,18 +372,14 @@ class _PostCardState extends State<PostCard> {
                 ],
               ),
               StreamBuilder<Map<String, dynamic>>(
-                stream: bloc!.savePost,
+                stream: bloc.savePost,
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                     final msg = snapshot.data!['message'] as String;
                     Future.delayed(
                       const Duration(microseconds: 500),
                       () async {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(msg),
-                          duration: const Duration(seconds: 1),
-                        ));
-                        toggleSave();
+                        toggleSave(bloc);
                         bloc.clearSavePostOutput();
                       },
                     );
@@ -400,7 +397,7 @@ class _PostCardState extends State<PostCard> {
                     Future.delayed(
                       const Duration(microseconds: 500),
                       () async {
-                        toggleLike();
+                        toggleLike(bloc);
                         bloc.clearLikePostOutput();
                       },
                     );
