@@ -50,11 +50,18 @@ class _PostCardState extends State<PostCard> {
     bloc.fetchAllPosts();
   }
 
-  void toggleSave(Bloc bloc) {
-    setState(() {
-      isSaved = !isSaved;
-    });
-    bloc.fetchAllPosts();
+  bool isLikePost(List lst, Bloc bloc) {
+    int matchCount = 0;
+    bool isLiked = false;
+    for (var i = 0; i < lst.length; i++) {
+      if (lst[i]['uid'] == bloc.getUserId()) {
+        matchCount++;
+      }
+    }
+    if (matchCount > 0) {
+      isLiked = true;
+    }
+    return isLiked;
   }
 
   String formatRelativeTime(DateTime timestamp) {
@@ -305,20 +312,21 @@ class _PostCardState extends State<PostCard> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: isLiked
+                        icon: isLikePost(widget.likes, bloc)
                             ? const Icon(Icons.favorite)
                             : const Icon(Icons.favorite_border),
                         onPressed: () {
                           bloc.likePostOutput(widget.id, bloc.getUserName(),
                               bloc.getUserImage());
                         },
-                        color: isLiked ? Colors.blue : null,
+                        color:
+                            isLikePost(widget.likes, bloc) ? Colors.blue : null,
                       ),
                       Text(
-                        likeCount > 1
-                            ? '$likeCount Likes'
-                            : likeCount == 1
-                                ? '$likeCount Like'
+                        widget.likes.length > 1
+                            ? '${widget.likes.length} Likes'
+                            : widget.likes.length == 1
+                                ? '${widget.likes.length} Like'
                                 : 'Like',
                         style: const TextStyle(
                             color: Colors.black,
@@ -352,13 +360,15 @@ class _PostCardState extends State<PostCard> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: isSaved
+                        icon: widget.saves.contains(bloc.getUserId())
                             ? const Icon(Icons.bookmark)
                             : const Icon(Icons.bookmark_border),
                         onPressed: () {
                           bloc.savePostOutput(widget.id);
                         },
-                        color: isSaved ? Colors.blue : null,
+                        color: widget.saves.contains(bloc.getUserId())
+                            ? Colors.blue
+                            : null,
                       ),
                       const Text(
                         'Save',
@@ -379,7 +389,8 @@ class _PostCardState extends State<PostCard> {
                     Future.delayed(
                       const Duration(microseconds: 500),
                       () async {
-                        toggleSave(bloc);
+                        bloc.fetchAllPosts();
+                        bloc.fetchAllSavePostsByCreator();
                         bloc.clearSavePostOutput();
                       },
                     );

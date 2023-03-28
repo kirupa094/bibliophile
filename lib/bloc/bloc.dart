@@ -134,12 +134,14 @@ class Bloc {
       final UserCredential userCredential =
           await getCredential(credential, context);
       final token = await userCredential.user!.getIdToken();
+      final userId = await userCredential.user!.uid;
       _token = token;
       _userImage = userCredential.user?.photoURL ?? '';
       _userName = userCredential.user?.displayName ?? '';
-      // _userId = userCredential.user!.uid;
+      _userId = userId;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString("token", token);
+      prefs.setString("userId", userId);
     } catch (e) {
       CustomFunction.loginErrorDialog(context, e.toString());
     }

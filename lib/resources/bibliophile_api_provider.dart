@@ -65,7 +65,7 @@ class BibliophileApiProvider {
 
       final result = json.decode(response.body);
       if (response.statusCode == 201) {
-        var user = (result);
+        var user = (result['result']);
         add(SignUpModel.fromParsedJason(user));
       } else {
         addError('${result['message']}');
@@ -188,7 +188,6 @@ class BibliophileApiProvider {
 
   getAllPosts(String token, Function(List<PostModel>) add,
       Function(Object) addError) async {
-    add([]);
     try {
       Map<String, String> headers = {
         "Authorization": 'Bearer $token',
@@ -254,7 +253,7 @@ class BibliophileApiProvider {
 
   savePost(String token, String postId, Function(Map<String, dynamic>) add,
       Function(Object) addError) async {
-    add({});
+    //add({});
     try {
       Map<String, String> headers = {
         "Authorization": 'Bearer $token',
@@ -315,7 +314,7 @@ class BibliophileApiProvider {
 
   likePost(String token, String postId, String userName, String userImage,
       Function(Map<String, dynamic>) add, Function(Object) addError) async {
-    add({});
+    //add({});
     try {
       Map<String, String> headers = {
         "Authorization": 'Bearer $token',
@@ -350,7 +349,7 @@ class BibliophileApiProvider {
       String comment,
       Function(Map<String, dynamic>) add,
       Function(Object) addError) async {
-    add({});
+    //add({});
     try {
       Map<String, String> headers = {
         "Authorization": 'Bearer $token',

@@ -225,7 +225,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: const Text('OK',
                           style: TextStyle(color: textSecondary, fontSize: 14)),
                       onPressed: () {
-                        _signIn(token, isNewUser,userId);
+                        _signIn(token, isNewUser, userId);
                       },
                     )
                   ]);
