@@ -33,12 +33,14 @@ class Bloc {
   final BehaviorSubject<Map<String, dynamic>> _likePostResult;
   final BehaviorSubject<Map<String, dynamic>> _commentPostResult;
   final PublishSubject<int> _currentTabIndex;
-  final PublishSubject<bool> _userProfile;
+  final BehaviorSubject<Map<String, dynamic>> _userProfileResult;
+  final  BehaviorSubject<bool> _isShowProfilePage;
 
   String _token = "";
   String _userImage = "";
   String _userName = "";
   String _userId = "";
+  String _profileId = "";
 
   static final Bloc _bloc = Bloc._internal();
 
@@ -62,6 +64,10 @@ class Bloc {
     return _userId;
   }
 
+  String getProfileId() {
+    return _profileId;
+  }
+
   setToken(String token) {
     _token = token;
   }
@@ -76,6 +82,10 @@ class Bloc {
 
   setUserId(String userId) {
     _userId = userId;
+  }
+
+  setProfileId(String profileId) {
+    _profileId = profileId;
   }
 
   Bloc._internal()
@@ -94,7 +104,8 @@ class Bloc {
         _likePostResult = BehaviorSubject<Map<String, dynamic>>(),
         _commentPostResult = BehaviorSubject<Map<String, dynamic>>(),
         _currentTabIndex = PublishSubject<int>(),
-        _userProfile = PublishSubject<bool>();
+        _userProfileResult = BehaviorSubject<Map<String, dynamic>>(),
+        _isShowProfilePage =  BehaviorSubject<bool>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -173,9 +184,9 @@ class Bloc {
   Stream<int> get currentTabIndex => _currentTabIndex.stream;
   Function(int) get changeCurrentTabIndex => _currentTabIndex.sink.add;
 
-  //User Profile
-  Stream<bool> get userProfile => _userProfile.stream;
-  Function(bool) get changeUserProfile => _userProfile.sink.add;
+  //Is Show Profile Page
+  Stream<bool> get isShowProfilePage => _isShowProfilePage.stream;
+  Function(bool) get changeIsShowProfilePage => _isShowProfilePage.sink.add;
 
   //SEARCH CONTROLLER
   Function(String) get searchBook => _searchController.sink.add;
@@ -373,6 +384,23 @@ class Bloc {
     if (_token != '') {
       _repository.commentPost(_token, postId, userName, userImage, comment,
           _addToCommentPostOutputStream, _commentPostResult.sink.addError);
+    }
+  }
+
+  //User Profile
+  Stream<Map<String, dynamic>> get userProfile => _userProfileResult.stream;
+  Function(String) get userProfileOutput => _userProfileOutput;
+
+  _addToUserProfileOutputStream(Map<String, dynamic> lst) {
+    _userProfileResult.sink.add(lst);
+  }
+
+  _userProfileOutput(
+    String userId,
+  ) {
+    if (_token != '') {
+      _repository.userProfile(_token, userId, _addToUserProfileOutputStream,
+          _userProfileResult.sink.addError);
     }
   }
 }

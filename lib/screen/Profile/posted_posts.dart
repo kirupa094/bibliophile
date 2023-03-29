@@ -4,12 +4,13 @@ import 'package:bibliophile/widgets/post_card.dart';
 import 'package:flutter/material.dart';
 
 class PostedPosts extends StatelessWidget {
-  const PostedPosts({Key? key}) : super(key: key);
+  final String userId;
+  const PostedPosts({Key? key, required this.userId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
-    bloc!.fetchAllPostsByCreator(bloc.getUserId());
+    bloc!.fetchAllPostsByCreator(userId);
     return StreamBuilder<List<PostModel>>(
       stream: bloc.getAllPostsByCreator,
       builder: (context, snapshot) {
@@ -22,7 +23,7 @@ class PostedPosts extends StatelessWidget {
         if (snapshot.data!.isEmpty) {
           return const Center(
             child: Text(
-              'You did not post yet',
+              'No post yet',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -51,7 +52,8 @@ class PostedPosts extends StatelessWidget {
           likes: lst[index].likes,
           msg: lst[index].message,
           name: lst[index].name,
-          saves:lst[index].saves,
+          saves: lst[index].saves,
+          creator: lst[index].creatorId,
         );
       },
     );

@@ -11,6 +11,7 @@ class PostCard extends StatefulWidget {
   final List comments;
   final List saves;
   final String id;
+  final String creator;
 
   const PostCard(
       {Key? key,
@@ -21,7 +22,8 @@ class PostCard extends StatefulWidget {
       required this.likes,
       required this.comments,
       required this.id,
-      required this.saves})
+      required this.saves,
+      required this.creator})
       : super(key: key);
 
   @override
@@ -78,28 +80,40 @@ class _PostCardState extends State<PostCard> {
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "$userName' Post",
-                style: const TextStyle(color: Colors.black),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              )
-            ],
-          ),
-          contentPadding: const EdgeInsets.only(left: 10, top: 10),
-          content: Scaffold(
+        return Container(
+          color: Colors.white,
+          margin: EdgeInsets.all(40),
+          width: MediaQuery.of(context).size.width,
+          child: Scaffold(
             backgroundColor: Colors.white,
+            appBar: AppBar(
+              elevation: 0,
+              backgroundColor: Colors.white,
+              automaticallyImplyLeading: false,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "$userName' Post",
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.black,
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              ),
+            ),
             body: SingleChildScrollView(
               child: lst.isNotEmpty
                   ? ListView.separated(
+                      padding:
+                          const EdgeInsets.only(left: 10, top: 10, right: 10),
                       separatorBuilder: (context, index) => const SizedBox(
                         height: 8,
                       ),
@@ -109,15 +123,27 @@ class _PostCardState extends State<PostCard> {
                         return Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              height: 30,
-                              width: 30,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: NetworkImage(lst[index]['photoURL']),
-                                    fit: BoxFit.cover,
-                                  )),
+                            GestureDetector(
+                              onTap: () {
+                                if (bloc.getUserId() != widget.creator) {
+                                  bloc.changeIsShowProfilePage(false);
+                                  bloc.setProfileId(widget.creator);
+                                  bloc.userProfileOutput(widget.creator);
+                                }
+                                Navigator.of(context).pop();
+                                bloc.changeCurrentTabIndex(2);
+                              },
+                              child: Container(
+                                height: 30,
+                                width: 30,
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      image:
+                                          NetworkImage(lst[index]['photoURL']),
+                                      fit: BoxFit.cover,
+                                    )),
+                              ),
                             ),
                             const SizedBox(
                               width: 10,
@@ -216,12 +242,34 @@ class _PostCardState extends State<PostCard> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    '${widget.name} on ${widget.bookTitle}',
-                    style: const TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 17),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          if (bloc!.getUserId() != widget.creator) {
+                            bloc.changeIsShowProfilePage(false);
+                            bloc.setProfileId(widget.creator);
+                            bloc.userProfileOutput(widget.creator);
+                          }
+                          bloc.changeCurrentTabIndex(2);
+                        },
+                        child: Text(
+                          '${widget.name} ',
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 17),
+                        ),
+                      ),
+                      Text(
+                        'on ${widget.bookTitle}',
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 17),
+                      ),
+                    ],
                   ),
                   Text(
                     formatRelativeTime(widget.createdAt),

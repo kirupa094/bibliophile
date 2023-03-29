@@ -379,4 +379,28 @@ class BibliophileApiProvider {
       addError(e);
     }
   }
+
+  userProfile(String token, String userId, Function(Map<String, dynamic>) add,
+      Function(Object) addError) async {
+    add({});
+    try {
+      Map<String, String> headers = {
+        "Authorization": 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+      final response =
+          await _client.get(Uri.parse('$_root/user/$userId'), headers: headers);
+
+      final result = json.decode(response.body);
+      if (response.statusCode == 200) {
+        add(result);
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      addError(e);
+    }
+  }
 }

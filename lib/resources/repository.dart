@@ -81,4 +81,9 @@ class Repository {
     _bibliophileApiProvider.commentPost(
         token, postId, userName, userImage, comment, add, addError);
   }
+
+  void userProfile(String token, String userId,
+      Function(Map<String, dynamic>) add, Function(Object) addError) {
+    _bibliophileApiProvider.userProfile(token, userId, add, addError);
+  }
 }

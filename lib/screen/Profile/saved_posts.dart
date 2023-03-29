@@ -52,6 +52,7 @@ class SavedPosts extends StatelessWidget {
           msg: lst[index].message,
           name: lst[index].name,
           saves: lst[index].saves,
+          creator: lst[index].creatorId,
         );
       },
     );
