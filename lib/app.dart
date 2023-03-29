@@ -17,7 +17,7 @@ class App extends StatelessWidget {
         title: 'Bibliophile App',
         theme: ThemeData(
             backgroundColor: Colors.white,
-            fontFamily: GoogleFonts.poppins().fontFamily),
+            fontFamily: GoogleFonts.inter().fontFamily),
         debugShowCheckedModeBanner: false,
         builder: (context, child) => ResponsiveWrapper.builder(child,
             maxWidth: 1200,

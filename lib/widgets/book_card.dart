@@ -2,6 +2,7 @@ import 'package:bibliophile/bloc/provider.dart';
 import 'package:bibliophile/model/shelf_model.dart';
 import 'package:bibliophile/util/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BookCard extends StatefulWidget {
   final String title;
@@ -73,7 +74,7 @@ class _BookCardState extends State<BookCard> {
                 padding: const EdgeInsets.only(left: 5, right: 5),
                 child: Text(
                   maxLines: 2,
-                  'By: ${widget.author}',
+                  'By: ${widget.author.join(',')}',
                   style: const TextStyle(
                       fontWeight: FontWeight.w500, fontSize: 12),
                 ),
@@ -124,28 +125,17 @@ class _BookCardState extends State<BookCard> {
                   ),
                   value: dropdownValue,
                   hint: const Text('ADD'),
-                  icon: const Icon(Icons.arrow_downward),
                   iconSize: 24,
                   style: const TextStyle(color: Colors.deepPurple),
                   onChanged: (String? newValue) {
                     setState(() {
                       dropdownValue = newValue;
                       if (dropdownValue == 'Read') {
-                        bloc!.updateShelf(
-                            widget.title,
-                            widget.author,
-                            widget.imgUrl,
-                            widget.year,
-                            widget.id,
-                            'read');
+                        bloc!.updateShelf(widget.title, widget.author,
+                            widget.imgUrl, widget.year, widget.id, 'read');
                       } else if (dropdownValue == 'To be read') {
-                        bloc!.updateShelf(
-                            widget.title,
-                            widget.author,
-                            widget.imgUrl,
-                            widget.year,
-                            widget.id,
-                            'toBeRead');
+                        bloc!.updateShelf(widget.title, widget.author,
+                            widget.imgUrl, widget.year, widget.id, 'toBeRead');
                       } else {
                         bloc!.updateShelf(
                             widget.title,
@@ -167,14 +157,18 @@ class _BookCardState extends State<BookCard> {
                 ),
               ),
             ),
-            StreamBuilder<ShelfBooksModel>(
+            StreamBuilder<Map<String, dynamic>>(
               stream: bloc!.updateShelfResult,
               builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Text('error');
-                }
-                if (snapshot.hasData) {
-                  bloc.fetchShelf();
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  Future.delayed(
+                    const Duration(microseconds: 500),
+                    () async {
+                      bloc.fetchShelf();
+                      bloc.clearUpdateShelfOutput();
+                    },
+                  );
+
                   return const SizedBox.shrink();
                 }
                 return const SizedBox.shrink();

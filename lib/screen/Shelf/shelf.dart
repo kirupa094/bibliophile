@@ -109,7 +109,7 @@ class _ShelfState extends State<Shelf> {
                       ),
                       onChanged: (value) {
                         if (value.isNotEmpty) {
-                          if (value.length > 3) {
+                          if (value.length >= 3) {
                             setState(() {
                               errorMsg = '';
                             });
@@ -136,7 +136,6 @@ class _ShelfState extends State<Shelf> {
                 height: 20,
               ),
               Flexible(
-                //height: MediaQuery.of(context).size.height - 250,
                 child: SingleChildScrollView(
                   child: click
                       ? StreamBuilder<List<BookModel>>(
@@ -145,11 +144,15 @@ class _ShelfState extends State<Shelf> {
                             if (snapshot.hasError) {
                               return Text(snapshot.error.toString());
                             }
-                            if (!snapshot.hasData) {
+                            if (!snapshot.hasData && snapshot.data!.isEmpty) {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            return _buildList(snapshot.data, context);
+                            if (snapshot.data!.isNotEmpty) {
+                              return _buildList(snapshot.data, context);
+                            }
+                            return const Center(
+                                child: CircularProgressIndicator());
                           },
                         )
                       : StreamBuilder<ShelfBooksModel>(

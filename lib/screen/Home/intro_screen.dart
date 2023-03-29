@@ -61,9 +61,9 @@ class _IntroScreenState extends State<IntroScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Hello Nithur!',
-                  style: TextStyle(
+                 Text(
+                  'Hello ${bloc!.getUserName()}!',
+                  style: const TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.w600,
                       fontSize: 18),
@@ -82,7 +82,7 @@ class _IntroScreenState extends State<IntroScreen> {
                   height: 15,
                 ),
                 StreamBuilder(
-                  stream: bloc!.booksList,
+                  stream: bloc.booksList,
                   builder: (context, snapshot) {
                     return Container(
                       decoration: const BoxDecoration(
@@ -128,7 +128,7 @@ class _IntroScreenState extends State<IntroScreen> {
                         ),
                         onChanged: (value) {
                           if (value.isNotEmpty) {
-                            if (value.length > 3) {
+                            if (value.length >= 3) {
                               setState(() {
                                 errorMsg = '';
                               });
@@ -162,11 +162,15 @@ class _IntroScreenState extends State<IntroScreen> {
                             if (snapshot.hasError) {
                               return Text(snapshot.error.toString());
                             }
-                            if (!snapshot.hasData) {
+                            if (!snapshot.hasData && snapshot.data!.isEmpty) {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
-                            return _buildList(snapshot.data, context);
+                            if (snapshot.data!.isNotEmpty) {
+                              return _buildList(snapshot.data, context);
+                            }
+                            return const Center(
+                                child: CircularProgressIndicator());
                           },
                         ),
                       )

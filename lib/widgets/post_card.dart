@@ -12,6 +12,7 @@ class PostCard extends StatefulWidget {
   final List saves;
   final String id;
   final String creator;
+  final String title;
 
   const PostCard(
       {Key? key,
@@ -23,7 +24,8 @@ class PostCard extends StatefulWidget {
       required this.comments,
       required this.id,
       required this.saves,
-      required this.creator})
+      required this.creator,
+      required this.title})
       : super(key: key);
 
   @override
@@ -32,6 +34,32 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool _isExpanded = false;
+  bool _isVisible = false;
+  bool isSaved = false;
+  int likeCount = 0;
+  bool isLiked = false;
+  String postId = '';
+
+  void toggleLike(Bloc bloc) {
+    setState(() {
+      isLiked = !isLiked;
+    });
+    if (isLiked) {
+      setState(() {
+        likeCount = likeCount + 1;
+      });
+    } else {
+      setState(() {
+        likeCount = likeCount - 1;
+      });
+    }
+  }
+
+  void toggleSave(Bloc bloc) {
+    setState(() {
+      isSaved = !isSaved;
+    });
+  }
 
   bool isLikePost(List lst, Bloc bloc) {
     int matchCount = 0;
@@ -71,18 +99,35 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bloc = Provider.of(context);
+      if (widget.saves.contains(bloc!.getUserId())) {
+        setState(() {
+          isSaved = true;
+        });
+      }
+      for (var i = 0; i < widget.likes.length; i++) {
+        if (widget.likes[i]['uid'] == bloc.getUserId()) {
+          setState(() {
+            isLiked = true;
+          });
+          break;
+        }
+      }
+      setState(() {
+        likeCount = widget.likes.length;
+      });
+    });
   }
 
   Future<void> _commentBox(BuildContext context, String userName, String postId,
       Bloc bloc, List lst) {
-    final TextEditingController _textController = TextEditingController();
     return showDialog<void>(
       context: context,
-      barrierDismissible: false,
       builder: (BuildContext context) {
         return Container(
           color: Colors.white,
-          margin: EdgeInsets.all(40),
+          margin: const EdgeInsets.all(40),
           width: MediaQuery.of(context).size.width,
           child: Scaffold(
             backgroundColor: Colors.white,
@@ -118,6 +163,7 @@ class _PostCardState extends State<PostCard> {
                         height: 8,
                       ),
                       shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
                       itemCount: lst.length,
                       itemBuilder: (BuildContext ctx, index) {
                         return Row(
@@ -177,46 +223,6 @@ class _PostCardState extends State<PostCard> {
                     )
                   : const SizedBox.shrink(),
             ),
-            bottomNavigationBar: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-              ),
-              child: TextField(
-                controller: _textController,
-                decoration: InputDecoration(
-                  contentPadding: const EdgeInsets.all(15.0),
-                  filled: true,
-                  fillColor: Colors.white,
-                  hintStyle: const TextStyle(
-                      color: Color.fromARGB(255, 118, 118, 118),
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16),
-                  suffixIcon: IconButton(
-                    icon: const Icon(Icons.send),
-                    onPressed: () {
-                      if (_textController.text != '') {
-                        bloc.commentPostOutput(postId, bloc.getUserName(),
-                            bloc.getUserImage(), _textController.text);
-                        _textController.text = '';
-                      }
-                      FocusScope.of(context).unfocus();
-                    },
-                  ),
-                  errorBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: textWarning, width: 2),
-                  ),
-                  enabledBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Color.fromARGB(255, 238, 238, 238), width: 2),
-                  ),
-                  focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Color.fromARGB(255, 238, 238, 238), width: 2),
-                  ),
-                ),
-              ),
-            ),
           ),
         );
       },
@@ -226,21 +232,47 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
-
+    final TextEditingController _textController = TextEditingController();
     return SingleChildScrollView(
       child: Card(
-        shape: const RoundedRectangleBorder(
-          side: BorderSide(color: Color.fromARGB(255, 206, 213, 220), width: 2),
-        ),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.all(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                  color: Colors.grey,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(20),
+                  ),
+                ),
+                child: Text(
+                  '${widget.bookTitle} ',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 17,
+                  ),
+                ),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Text(
+                '${widget.title} ',
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 25),
+              ),
+              const SizedBox(
+                height: 10,
+              ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -257,31 +289,37 @@ class _PostCardState extends State<PostCard> {
                         child: Text(
                           '${widget.name} ',
                           style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w700,
+                              color: Color.fromARGB(255, 105, 105, 105),
+                              fontWeight: FontWeight.w600,
                               fontSize: 17),
                         ),
                       ),
-                      Text(
-                        'on ${widget.bookTitle}',
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 17),
-                      ),
                     ],
+                  ),
+                  const SizedBox(
+                    width: 2,
+                  ),
+                  const Text(
+                    '•',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 105, 105, 105),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14),
+                  ),
+                  const SizedBox(
+                    width: 4,
                   ),
                   Text(
                     formatRelativeTime(widget.createdAt),
                     style: const TextStyle(
-                        color: Colors.black,
+                        color: Color.fromARGB(255, 105, 105, 105),
                         fontWeight: FontWeight.w600,
                         fontSize: 14),
                   )
                 ],
               ),
               const SizedBox(
-                height: 5,
+                height: 8,
               ),
               AnimatedContainer(
                 duration: const Duration(milliseconds: 500),
@@ -326,21 +364,23 @@ class _PostCardState extends State<PostCard> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: isLikePost(widget.likes, bloc!)
+                        icon: isLiked
                             ? const Icon(Icons.favorite)
                             : const Icon(Icons.favorite_border),
                         onPressed: () {
-                          bloc.likePostOutput(widget.id, bloc.getUserName(),
+                          setState(() {
+                            postId = widget.id;
+                          });
+                          bloc!.likePostOutput(widget.id, bloc.getUserName(),
                               bloc.getUserImage());
                         },
-                        color:
-                            isLikePost(widget.likes, bloc) ? Colors.blue : null,
+                        color: isLiked ? Colors.blue : null,
                       ),
                       Text(
-                        widget.likes.length > 1
-                            ? '${widget.likes.length} Likes'
-                            : widget.likes.length == 1
-                                ? '${widget.likes.length} Like'
+                        likeCount > 1
+                            ? '$likeCount Likes'
+                            : likeCount == 1
+                                ? '$likeCount Like'
                                 : 'Like',
                         style: const TextStyle(
                             color: Colors.black,
@@ -354,19 +394,24 @@ class _PostCardState extends State<PostCard> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.comment),
-                        onPressed: () => _commentBox(context, widget.name,
-                            widget.id, bloc, widget.comments),
+                        onPressed: () => setState(() {
+                          _isVisible = !_isVisible;
+                        }),
                       ),
-                      Text(
-                        widget.comments.length > 1
-                            ? '${widget.comments.length} Comments'
-                            : widget.comments.length == 1
-                                ? '${widget.comments.length} Comment'
-                                : 'Comment',
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14),
+                      GestureDetector(
+                        onTap: () => _commentBox(context, widget.name,
+                            widget.id, bloc!, widget.comments),
+                        child: Text(
+                          widget.comments.length > 1
+                              ? '${widget.comments.length} Comments'
+                              : widget.comments.length == 1
+                                  ? '${widget.comments.length} Comment'
+                                  : 'Comment',
+                          style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14),
+                        ),
                       )
                     ],
                   ),
@@ -374,15 +419,16 @@ class _PostCardState extends State<PostCard> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: widget.saves.contains(bloc.getUserId())
+                        icon: isSaved
                             ? const Icon(Icons.bookmark)
                             : const Icon(Icons.bookmark_border),
                         onPressed: () {
-                          bloc.savePostOutput(widget.id);
+                          setState(() {
+                            postId = widget.id;
+                          });
+                          bloc!.savePostOutput(widget.id);
                         },
-                        color: widget.saves.contains(bloc.getUserId())
-                            ? Colors.blue
-                            : null,
+                        color: isSaved ? Colors.blue : null,
                       ),
                       const Text(
                         'Save',
@@ -395,17 +441,68 @@ class _PostCardState extends State<PostCard> {
                   ),
                 ],
               ),
+              Visibility(
+                visible: _isVisible,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: TextField(
+                    controller: _textController,
+                    decoration: InputDecoration(
+                      contentPadding: const EdgeInsets.all(15.0),
+                      filled: true,
+                      fillColor: Colors.white,
+                      hintStyle: const TextStyle(
+                          color: Color.fromARGB(255, 118, 118, 118),
+                          fontWeight: FontWeight.w400,
+                          fontSize: 16),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: () {
+                          if (_textController.text != '') {
+                            bloc!.commentPostOutput(
+                                widget.id,
+                                bloc.getUserName(),
+                                bloc.getUserImage(),
+                                _textController.text);
+                            _textController.text = '';
+                          }
+                          FocusScope.of(context).unfocus();
+                        },
+                      ),
+                      errorBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(color: textWarning, width: 2),
+                      ),
+                      enabledBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Color.fromARGB(255, 238, 238, 238),
+                            width: 2),
+                      ),
+                      focusedBorder: const OutlineInputBorder(
+                        borderSide: BorderSide(
+                            color: Color.fromARGB(255, 238, 238, 238),
+                            width: 2),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
               StreamBuilder<Map<String, dynamic>>(
-                stream: bloc.savePost,
+                stream: bloc!.savePost,
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                     final msg = snapshot.data!['message'] as String;
                     Future.delayed(
                       const Duration(microseconds: 500),
                       () async {
-                        bloc.fetchAllPosts();
-                        bloc.fetchAllSavePostsByCreator();
-                        bloc.clearSavePostOutput();
+                        if (snapshot.data!['_id'] == postId) {
+                          toggleSave(bloc);
+                          bloc.fetchAllPosts();
+                          bloc.fetchAllSavePostsByCreator();
+                          bloc.clearSavePostOutput();
+                        }
                       },
                     );
 
@@ -418,12 +515,14 @@ class _PostCardState extends State<PostCard> {
                 stream: bloc.likePost,
                 builder: (context, snapshot) {
                   if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    final msg = snapshot.data!['message'] as String;
                     Future.delayed(
                       const Duration(microseconds: 500),
                       () async {
-                        bloc.fetchAllPosts();
-                        bloc.clearLikePostOutput();
+                        if (snapshot.data!['_id'] == postId) {
+                          toggleLike(bloc);
+                          bloc.fetchAllPosts();
+                          bloc.clearLikePostOutput();
+                        }
                       },
                     );
 

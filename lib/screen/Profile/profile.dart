@@ -104,8 +104,8 @@ class Profile extends StatelessWidget {
                         const TabBar(
                             padding: EdgeInsets.all(0),
                             unselectedLabelColor: Colors.black,
-                            labelColor: Color.fromARGB(255, 101, 88, 245),
-                            indicatorColor: Color.fromARGB(255, 101, 88, 245),
+                            labelColor: Colors.blue,
+                            indicatorColor: Colors.blue,
                             indicatorPadding: EdgeInsets.all(0.0),
                             indicatorWeight: 2,
                             labelPadding: EdgeInsets.all(0),
@@ -119,15 +119,15 @@ class Profile extends StatelessWidget {
                               fontWeight: FontWeight.w700,
                             ),
                             tabs: [
-                              Tab(text: "Posted Posts"),
+                              Tab(text: "Your Posts"),
                               Tab(text: "Saved Posts"),
                             ]),
                         const SizedBox(
                           height: 20,
                         ),
                         SingleChildScrollView(
-                          child: SizedBox(
-                            //Add this to give height
+                          child: Container(
+                            color: Colors.grey[300],
                             height: MediaQuery.of(context).size.height - 350,
                             child: TabBarView(children: [
                               PostedPosts(userId: bloc.getUserId()),

@@ -52,6 +52,7 @@ class Post extends StatelessWidget {
           name: lst[index].name,
           saves: lst[index].saves,
           creator: lst[index].creatorId,
+          title: lst[index].title,
         );
       },
     );

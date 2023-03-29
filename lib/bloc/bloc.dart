@@ -24,7 +24,7 @@ class Bloc {
   final BehaviorSubject<List<BookModel>> _bookResult;
   final BehaviorSubject<SignUpModel> _registerUser;
   final BehaviorSubject<ShelfBooksModel> _shelfResult;
-  final BehaviorSubject<ShelfBooksModel> _addShelfResult;
+  final BehaviorSubject<Map<String, dynamic>> _addShelfResult;
   final BehaviorSubject<Map<String, dynamic>> _createPostResult;
   final BehaviorSubject<List<PostModel>> _getAllPostResult;
   final BehaviorSubject<List<PostModel>> _getAllPostByCreatorResult;
@@ -34,7 +34,7 @@ class Bloc {
   final BehaviorSubject<Map<String, dynamic>> _commentPostResult;
   final PublishSubject<int> _currentTabIndex;
   final BehaviorSubject<Map<String, dynamic>> _userProfileResult;
-  final  BehaviorSubject<bool> _isShowProfilePage;
+  final BehaviorSubject<bool> _isShowProfilePage;
 
   String _token = "";
   String _userImage = "";
@@ -95,7 +95,7 @@ class Bloc {
         _bookResult = BehaviorSubject<List<BookModel>>(),
         _registerUser = BehaviorSubject<SignUpModel>(),
         _shelfResult = BehaviorSubject<ShelfBooksModel>(),
-        _addShelfResult = BehaviorSubject<ShelfBooksModel>(),
+        _addShelfResult = BehaviorSubject<Map<String, dynamic>>(),
         _createPostResult = BehaviorSubject<Map<String, dynamic>>(),
         _getAllPostResult = BehaviorSubject<List<PostModel>>(),
         _getAllPostByCreatorResult = BehaviorSubject<List<PostModel>>(),
@@ -105,7 +105,7 @@ class Bloc {
         _commentPostResult = BehaviorSubject<Map<String, dynamic>>(),
         _currentTabIndex = PublishSubject<int>(),
         _userProfileResult = BehaviorSubject<Map<String, dynamic>>(),
-        _isShowProfilePage =  BehaviorSubject<bool>();
+        _isShowProfilePage = BehaviorSubject<bool>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -234,12 +234,16 @@ class Bloc {
   }
 
   //ADD BOOKS TO SHELF
-  Stream<ShelfBooksModel> get updateShelfResult => _addShelfResult.stream;
+  Stream<Map<String, dynamic>> get updateShelfResult => _addShelfResult.stream;
   Function(String, List<dynamic>, String, String, String, String)
       get updateShelf => _updateShelf;
 
-  _updateShelfStream(ShelfBooksModel shelfBooksModel) {
-    _addShelfResult.sink.add(shelfBooksModel);
+  _updateShelfStream(Map<String, dynamic> lst) {
+    _addShelfResult.sink.add(lst);
+  }
+
+  void clearUpdateShelfOutput() {
+    _addShelfResult.sink.add({});
   }
 
   _updateShelf(

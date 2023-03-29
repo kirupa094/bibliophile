@@ -32,7 +32,7 @@ class Repository {
       String year,
       String id,
       String category,
-      Function(ShelfBooksModel) add,
+      Function(Map<String, dynamic>) add,
       Function(Object) addError) {
     _bibliophileApiProvider.updateShelfRequest(
         token, title, author, cover, year, id, category, add, addError);

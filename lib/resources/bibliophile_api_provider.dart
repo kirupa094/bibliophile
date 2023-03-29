@@ -14,7 +14,7 @@ class BibliophileApiProvider {
 
   BibliophileApiProvider()
       : _client = Client(),
-        _root = 'https://biblio.azurewebsites.net';
+        _root = 'http://localhost:3001';
 
   searchBook(String title, Function(List<BookModel>) add,
       Function(Object) addError) async {
@@ -116,9 +116,9 @@ class BibliophileApiProvider {
       String year,
       String id,
       String category,
-      Function(ShelfBooksModel) add,
+      Function(Map<String, dynamic>) add,
       Function(Object) addError) async {
-    add(ShelfBooksModel.fromParsedJason({}));
+    add({});
 
     try {
       Map<String, String> headers = {
@@ -141,7 +141,7 @@ class BibliophileApiProvider {
 
       final result = json.decode(response.body);
       if (response.statusCode == 201) {
-        add(ShelfBooksModel.fromParsedJason(result));
+        add(result);
       } else {
         addError('${result['message']}');
       }
@@ -220,7 +220,7 @@ class BibliophileApiProvider {
 
   getAllPostsByCreator(String token, String creatorId,
       Function(List<PostModel>) add, Function(Object) addError) async {
-    add([]);
+    // add([]);
     try {
       Map<String, String> headers = {
         "Authorization": 'Bearer $token',
@@ -279,7 +279,7 @@ class BibliophileApiProvider {
 
   getAllSavedPosts(String token, Function(List<PostModel>) add,
       Function(Object) addError) async {
-    add([]);
+    // add([]);
     try {
       Map<String, String> headers = {
         "Authorization": 'Bearer $token',
@@ -382,7 +382,7 @@ class BibliophileApiProvider {
 
   userProfile(String token, String userId, Function(Map<String, dynamic>) add,
       Function(Object) addError) async {
-    add({});
+    // add({});
     try {
       Map<String, String> headers = {
         "Authorization": 'Bearer $token',

@@ -42,7 +42,7 @@ class _BottomNavigationBarMenuState extends State<BottomNavigationBarMenu> {
               unselectedFontSize: 12,
               type: BottomNavigationBarType.fixed,
               unselectedItemColor: Colors.black,
-              selectedItemColor: const Color.fromARGB(255, 101, 88, 245),
+              selectedItemColor: Colors.blue,
               showUnselectedLabels: true,
               onTap: (value) {
                 bloc.changeCurrentTabIndex(value);

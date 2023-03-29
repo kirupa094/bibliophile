@@ -19,6 +19,7 @@ class _HomeState extends State<Home> {
     bloc!.fetchAllPosts();
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.grey[300],
         appBar: AppBar(
           elevation: 0,
           automaticallyImplyLeading: false,
