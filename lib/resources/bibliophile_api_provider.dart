@@ -14,7 +14,7 @@ class BibliophileApiProvider {
 
   BibliophileApiProvider()
       : _client = Client(),
-        _root = 'http://localhost:3001';
+        _root = 'https://biblio.azurewebsites.net';
 
   searchBook(String title, Function(List<BookModel>) add,
       Function(Object) addError) async {

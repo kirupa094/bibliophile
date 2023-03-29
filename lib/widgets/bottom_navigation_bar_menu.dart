@@ -1,3 +1,4 @@
+import 'package:bibliophile/bloc/provider.dart';
 import 'package:bibliophile/screen/Home/home.dart';
 import 'package:bibliophile/screen/Profile/profile.dart';
 import 'package:bibliophile/screen/Shelf/shelf.dart';
@@ -25,33 +26,44 @@ class _BottomNavigationBarMenuState extends State<BottomNavigationBarMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _children[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        elevation: 4,
-        selectedFontSize: 12,
-        unselectedFontSize: 12,
-        type: BottomNavigationBarType.fixed,
-        unselectedItemColor: Colors.black,
-        selectedItemColor: const Color.fromARGB(255, 101, 88, 245),
-        showUnselectedLabels: true,
-        onTap: onTabTapped,
-        currentIndex: _currentIndex,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.book),
-            label: "Shelf",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
-        ],
-      ),
-    );
+    final bloc = Provider.of(context);
+    return StreamBuilder<int>(
+        stream: bloc!.currentTabIndex,
+        initialData: 0,
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Container();
+          }
+          return Scaffold(
+            body: _children[snapshot.data ?? 0],
+            bottomNavigationBar: BottomNavigationBar(
+              elevation: 4,
+              selectedFontSize: 12,
+              unselectedFontSize: 12,
+              type: BottomNavigationBarType.fixed,
+              unselectedItemColor: Colors.black,
+              selectedItemColor: const Color.fromARGB(255, 101, 88, 245),
+              showUnselectedLabels: true,
+              onTap: (value) {
+                bloc.changeCurrentTabIndex(value);
+              },
+              currentIndex: snapshot.data ?? 0,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home_outlined),
+                  label: "Home",
+                ),
+                BottomNavigationBarItem(
+                  icon: FaIcon(FontAwesomeIcons.book),
+                  label: "Shelf",
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: "Profile",
+                ),
+              ],
+            ),
+          );
+        });
   }
 }

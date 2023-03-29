@@ -30,25 +30,6 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool _isExpanded = false;
-  bool isLiked = false;
-  bool isSaved = false;
-  int likeCount = 0;
-
-  void toggleLike(Bloc bloc) {
-    setState(() {
-      isLiked = !isLiked;
-    });
-    if (isLiked) {
-      setState(() {
-        likeCount = likeCount + 1;
-      });
-    } else {
-      setState(() {
-        likeCount = likeCount - 1;
-      });
-    }
-    bloc.fetchAllPosts();
-  }
 
   bool isLikePost(List lst, Bloc bloc) {
     int matchCount = 0;
@@ -171,6 +152,7 @@ class _PostCardState extends State<PostCard> {
                   : const SizedBox.shrink(),
             ),
             bottomNavigationBar: Container(
+              padding: const EdgeInsets.all(8),
               decoration: const BoxDecoration(
                 color: Colors.white,
               ),
@@ -190,10 +172,9 @@ class _PostCardState extends State<PostCard> {
                       if (_textController.text != '') {
                         bloc.commentPostOutput(postId, bloc.getUserName(),
                             bloc.getUserImage(), _textController.text);
-                        bloc.fetchAllPosts();
+                        _textController.text = '';
                       }
                       FocusScope.of(context).unfocus();
-                      Navigator.of(context).pop();
                     },
                   ),
                   errorBorder: const OutlineInputBorder(
@@ -219,22 +200,7 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
-    if (widget.saves.contains(bloc!.getUserId())) {
-      setState(() {
-        isSaved = true;
-      });
-    }
-    for (var i = 0; i < widget.likes.length; i++) {
-      if (widget.likes[i]['uid'] == bloc.getUserId()) {
-        setState(() {
-          isLiked = true;
-        });
-        break;
-      }
-    }
-    setState(() {
-      likeCount = widget.likes.length;
-    });
+
     return SingleChildScrollView(
       child: Card(
         shape: const RoundedRectangleBorder(
@@ -312,7 +278,7 @@ class _PostCardState extends State<PostCard> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: isLikePost(widget.likes, bloc)
+                        icon: isLikePost(widget.likes, bloc!)
                             ? const Icon(Icons.favorite)
                             : const Icon(Icons.favorite_border),
                         onPressed: () {
@@ -408,7 +374,7 @@ class _PostCardState extends State<PostCard> {
                     Future.delayed(
                       const Duration(microseconds: 500),
                       () async {
-                        toggleLike(bloc);
+                        bloc.fetchAllPosts();
                         bloc.clearLikePostOutput();
                       },
                     );
@@ -427,6 +393,7 @@ class _PostCardState extends State<PostCard> {
                       const Duration(microseconds: 500),
                       () async {
                         bloc.clearCommentPostOutput();
+                        bloc.fetchAllPosts();
                       },
                     );
 

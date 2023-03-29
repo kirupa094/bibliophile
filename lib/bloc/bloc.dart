@@ -32,6 +32,8 @@ class Bloc {
   final BehaviorSubject<List<PostModel>> _getAllSavePostByCreatorResult;
   final BehaviorSubject<Map<String, dynamic>> _likePostResult;
   final BehaviorSubject<Map<String, dynamic>> _commentPostResult;
+  final PublishSubject<int> _currentTabIndex;
+  final PublishSubject<bool> _userProfile;
 
   String _token = "";
   String _userImage = "";
@@ -90,7 +92,9 @@ class Bloc {
         _savePostResult = BehaviorSubject<Map<String, dynamic>>(),
         _getAllSavePostByCreatorResult = BehaviorSubject<List<PostModel>>(),
         _likePostResult = BehaviorSubject<Map<String, dynamic>>(),
-        _commentPostResult = BehaviorSubject<Map<String, dynamic>>();
+        _commentPostResult = BehaviorSubject<Map<String, dynamic>>(),
+        _currentTabIndex = PublishSubject<int>(),
+        _userProfile = PublishSubject<bool>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -164,6 +168,14 @@ class Bloc {
   //INIT DATA
   Stream<InitData> get initDataConfig => _initDataConfig.stream;
   Function(InitData) get changeInitDataConfig => _initDataConfig.sink.add;
+
+  //Tab index
+  Stream<int> get currentTabIndex => _currentTabIndex.stream;
+  Function(int) get changeCurrentTabIndex => _currentTabIndex.sink.add;
+
+  //User Profile
+  Stream<bool> get userProfile => _userProfile.stream;
+  Function(bool) get changeUserProfile => _userProfile.sink.add;
 
   //SEARCH CONTROLLER
   Function(String) get searchBook => _searchController.sink.add;
