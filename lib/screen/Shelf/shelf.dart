@@ -144,7 +144,7 @@ class _ShelfState extends State<Shelf> {
                             if (snapshot.hasError) {
                               return Text(snapshot.error.toString());
                             }
-                            if (!snapshot.hasData && snapshot.data!.isEmpty) {
+                            if (!snapshot.hasData) {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }

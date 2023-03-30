@@ -54,18 +54,22 @@ class CommentScreen extends StatelessWidget {
                 color: Colors.white,
               ),
               child: TextField(
+                cursorColor: Colors.black,
                 controller: _textController,
                 decoration: InputDecoration(
                   hintText: 'Add comment',
                   contentPadding: const EdgeInsets.all(15.0),
                   filled: true,
-                  fillColor: Color.fromARGB(255, 118, 118, 118),
+                  fillColor: Colors.grey[200],
                   hintStyle: const TextStyle(
-                      color: Colors.white,
+                      color: Colors.black,
                       fontWeight: FontWeight.w400,
                       fontSize: 16),
                   suffixIcon: IconButton(
-                    icon: const Icon(Icons.send),
+                    icon: Icon(
+                      Icons.send,
+                      color: Colors.grey[400],
+                    ),
                     onPressed: () {
                       if (_textController.text != '') {
                         bloc.commentPostOutput(postId, bloc.getUserName(),
@@ -108,6 +112,9 @@ class CommentScreen extends StatelessWidget {
                 }
                 if (!snapshot.hasData) {
                   return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.data!.isEmpty) {
+                  return const SizedBox.shrink();
                 }
                 if (snapshot.data!.isNotEmpty) {
                   return ListView.separated(

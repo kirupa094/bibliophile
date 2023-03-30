@@ -162,7 +162,7 @@ class _IntroScreenState extends State<IntroScreen> {
                             if (snapshot.hasError) {
                               return Text(snapshot.error.toString());
                             }
-                            if (!snapshot.hasData && snapshot.data!.isEmpty) {
+                            if (!snapshot.hasData) {
                               return const Center(
                                   child: CircularProgressIndicator());
                             }
