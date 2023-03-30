@@ -13,7 +13,7 @@ class Profile extends StatelessWidget {
       child: Row(
         children: <Widget>[
           CircleAvatar(
-            radius: 45,
+            radius: 35,
             backgroundImage: NetworkImage(url),
           ),
           const SizedBox(

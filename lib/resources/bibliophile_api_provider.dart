@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/comment_model.dart';
 import 'package:bibliophile/model/create_post_model.dart';
 import 'package:bibliophile/model/post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
@@ -266,7 +267,7 @@ class BibliophileApiProvider {
 
       final result = json.decode(response.body);
       if (response.statusCode == 201) {
-        add(result);
+        add(result['data']);
       } else {
         addError('${result['message']}');
       }
@@ -330,7 +331,7 @@ class BibliophileApiProvider {
       final result = json.decode(response.body);
 
       if (response.statusCode == 201) {
-        add(result);
+        add(result['data']);
       } else {
         addError('${result['message']}');
       }
@@ -400,6 +401,41 @@ class BibliophileApiProvider {
     } on SocketException {
       addError(_networkErrorMsg);
     } catch (e) {
+      addError(e);
+    }
+  }
+
+  getComments(String token, String postId, Function(List<CommentModel>) add,
+      Function(Object) addError) async {
+    //add([]);
+    try {
+      Map<String, String> headers = {
+        "Authorization": 'Bearer $token',
+        'Content-Type': 'application/json; charset=UTF-8',
+      };
+      final response = await _client
+          .get(Uri.parse('$_root/posts/$postId/commentPost'), headers: headers);
+
+      final result = json.decode(response.body);
+
+      if (response.statusCode == 200) {
+        List<CommentModel> lst = [];
+
+        var items = (result['data']);
+
+        if (items != null) {
+          for (var item in items) {
+            lst.add(CommentModel.fromParsedJason(item));
+          }
+        }
+        add(lst);
+      } else {
+        addError('${result['message']}');
+      }
+    } on SocketException {
+      addError(_networkErrorMsg);
+    } catch (e) {
+      // print(e);
       addError(e);
     }
   }

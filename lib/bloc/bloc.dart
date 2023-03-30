@@ -1,5 +1,6 @@
 import 'package:bibliophile/customFunction/custom_function.dart';
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/comment_model.dart';
 import 'package:bibliophile/model/create_post_model.dart';
 import 'package:bibliophile/model/post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
@@ -35,6 +36,7 @@ class Bloc {
   final PublishSubject<int> _currentTabIndex;
   final BehaviorSubject<Map<String, dynamic>> _userProfileResult;
   final BehaviorSubject<bool> _isShowProfilePage;
+  final BehaviorSubject<List<CommentModel>> _commentResultController;
 
   String _token = "";
   String _userImage = "";
@@ -105,7 +107,8 @@ class Bloc {
         _commentPostResult = BehaviorSubject<Map<String, dynamic>>(),
         _currentTabIndex = PublishSubject<int>(),
         _userProfileResult = BehaviorSubject<Map<String, dynamic>>(),
-        _isShowProfilePage = BehaviorSubject<bool>();
+        _isShowProfilePage = BehaviorSubject<bool>(),
+        _commentResultController = BehaviorSubject<List<CommentModel>>();
 
   //AUTH SERVICES
   signInWithGoogle(BuildContext context) async {
@@ -405,6 +408,27 @@ class Bloc {
     if (_token != '') {
       _repository.userProfile(_token, userId, _addToUserProfileOutputStream,
           _userProfileResult.sink.addError);
+    }
+  }
+
+  //Get Comments
+  Stream<List<CommentModel>> get comments => _commentResultController.stream;
+  Function(String) get commentResultOutput => _commentResultOutput;
+
+  _addToCommentOutputStream(List<CommentModel> lst) {
+    _commentResultController.sink.add(lst);
+  }
+
+  void clearComments() {
+    _commentResultController.sink.add([]);
+  }
+
+  _commentResultOutput(
+    String postId,
+  ) {
+    if (_token != '') {
+      _repository.getComments(_token, postId, _addToCommentOutputStream,
+          _commentResultController.sink.addError);
     }
   }
 }

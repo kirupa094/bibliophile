@@ -1,4 +1,6 @@
 import 'package:bibliophile/bloc/provider.dart';
+import 'package:bibliophile/model/comment_model.dart';
+import 'package:bibliophile/screen/Home/comment_screen.dart';
 import 'package:bibliophile/util/constant.dart';
 import 'package:flutter/material.dart';
 
@@ -122,106 +124,156 @@ class _PostCardState extends State<PostCard> {
 
   Future<void> _commentBox(BuildContext context, String userName, String postId,
       Bloc bloc, List lst) {
+    bloc.commentResultOutput(postId);
+    final TextEditingController _textController = TextEditingController();
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
-        return Container(
-          color: Colors.white,
-          margin: const EdgeInsets.all(40),
-          width: MediaQuery.of(context).size.width,
-          child: Scaffold(
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            elevation: 0,
             backgroundColor: Colors.white,
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.white,
-              automaticallyImplyLeading: false,
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "$userName' Post",
-                    style: const TextStyle(color: Colors.black),
+            automaticallyImplyLeading: false,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "$userName' Post",
+                  style: const TextStyle(color: Colors.black),
+                ),
+                IconButton(
+                  icon: const Icon(
+                    Icons.close,
+                    color: Colors.black,
                   ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.close,
-                      color: Colors.black,
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                  )
-                ],
-              ),
+                  onPressed: () {
+                    bloc.clearComments();
+                    Navigator.of(context).pop();
+                  },
+                )
+              ],
             ),
-            body: SingleChildScrollView(
-              child: lst.isNotEmpty
-                  ? ListView.separated(
-                      padding:
-                          const EdgeInsets.only(left: 10, top: 10, right: 10),
-                      separatorBuilder: (context, index) => const SizedBox(
-                        height: 8,
-                      ),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: lst.length,
-                      itemBuilder: (BuildContext ctx, index) {
-                        return Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                if (bloc.getUserId() != widget.creator) {
-                                  bloc.changeIsShowProfilePage(false);
-                                  bloc.setProfileId(widget.creator);
-                                  bloc.userProfileOutput(widget.creator);
-                                }
-                                Navigator.of(context).pop();
-                                bloc.changeCurrentTabIndex(2);
-                              },
-                              child: Container(
-                                height: 30,
-                                width: 30,
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    image: DecorationImage(
-                                      image:
-                                          NetworkImage(lst[index]['photoURL']),
-                                      fit: BoxFit.cover,
-                                    )),
-                              ),
+          ),
+          body: SingleChildScrollView(
+            child: StreamBuilder<List<CommentModel>>(
+              stream: bloc.comments,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text(snapshot.error.toString());
+                }
+                if (!snapshot.hasData) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snapshot.data!.isNotEmpty) {
+                  return ListView.separated(
+                    padding:
+                        const EdgeInsets.only(left: 10, top: 10, right: 10),
+                    separatorBuilder: (context, index) => const SizedBox(
+                      height: 8,
+                    ),
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (BuildContext ctx, index) {
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (bloc.getUserId() != widget.creator) {
+                                bloc.changeIsShowProfilePage(false);
+                                bloc.setProfileId(widget.creator);
+                                bloc.userProfileOutput(widget.creator);
+                              }
+                              Navigator.of(context).pop();
+                              bloc.changeCurrentTabIndex(2);
+                            },
+                            child: Container(
+                              height: 30,
+                              width: 30,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: NetworkImage(
+                                        snapshot.data![index].photoURL),
+                                    fit: BoxFit.cover,
+                                  )),
                             ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: const BoxDecoration(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
-                                  color: Color.fromARGB(255, 170, 170, 170)),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    lst[index]['username'],
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(8)),
+                                color: Colors.grey[200]),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  snapshot.data![index].username,
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600),
+                                ),
+                                const SizedBox(
+                                  height: 2,
+                                ),
+                                Text(snapshot.data![index].comment,
                                     style: const TextStyle(
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                  const SizedBox(
-                                    height: 2,
-                                  ),
-                                  Text(lst[index]['comment'],
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.w400)),
-                                ],
-                              ),
-                            )
-                          ],
-                        );
-                      },
-                    )
-                  : const SizedBox.shrink(),
+                                        fontWeight: FontWeight.w400)),
+                              ],
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  );
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+          ),
+          bottomNavigationBar: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+            ),
+            child: TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                contentPadding: const EdgeInsets.all(15.0),
+                filled: true,
+                fillColor: Color.fromARGB(255, 118, 118, 118),
+                hintStyle: const TextStyle(
+                    color: Color.fromARGB(255, 118, 118, 118),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 16),
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.send),
+                  onPressed: () {
+                    if (_textController.text != '') {
+                      bloc.commentPostOutput(widget.id, bloc.getUserName(),
+                          bloc.getUserImage(), _textController.text);
+                      _textController.text = '';
+                    }
+                    FocusScope.of(context).unfocus();
+                  },
+                ),
+                errorBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: textWarning, width: 2),
+                ),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Color.fromARGB(255, 238, 238, 238), width: 2),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(
+                      color: Color.fromARGB(255, 238, 238, 238), width: 2),
+                ),
+              ),
             ),
           ),
         );
@@ -232,7 +284,6 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     final bloc = Provider.of(context);
-    final TextEditingController _textController = TextEditingController();
     return SingleChildScrollView(
       child: Card(
         child: Container(
@@ -394,24 +445,28 @@ class _PostCardState extends State<PostCard> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.comment),
-                        onPressed: () => setState(() {
-                          _isVisible = !_isVisible;
-                        }),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CommentScreen(
+                                  postId: widget.id,
+                                  username: widget.name,
+                                  creatorId: widget.creator),
+                            ),
+                          );
+                        },
                       ),
-                      GestureDetector(
-                        onTap: () => _commentBox(context, widget.name,
-                            widget.id, bloc!, widget.comments),
-                        child: Text(
-                          widget.comments.length > 1
-                              ? '${widget.comments.length} Comments'
-                              : widget.comments.length == 1
-                                  ? '${widget.comments.length} Comment'
-                                  : 'Comment',
-                          style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14),
-                        ),
+                      Text(
+                        widget.comments.length > 1
+                            ? '${widget.comments.length} Comments'
+                            : widget.comments.length == 1
+                                ? '${widget.comments.length} Comment'
+                                : 'Comment',
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14),
                       )
                     ],
                   ),
@@ -440,54 +495,6 @@ class _PostCardState extends State<PostCard> {
                     ],
                   ),
                 ],
-              ),
-              Visibility(
-                visible: _isVisible,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: TextField(
-                    controller: _textController,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(15.0),
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintStyle: const TextStyle(
-                          color: Color.fromARGB(255, 118, 118, 118),
-                          fontWeight: FontWeight.w400,
-                          fontSize: 16),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.send),
-                        onPressed: () {
-                          if (_textController.text != '') {
-                            bloc!.commentPostOutput(
-                                widget.id,
-                                bloc.getUserName(),
-                                bloc.getUserImage(),
-                                _textController.text);
-                            _textController.text = '';
-                          }
-                          FocusScope.of(context).unfocus();
-                        },
-                      ),
-                      errorBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(color: textWarning, width: 2),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 238, 238, 238),
-                            width: 2),
-                      ),
-                      focusedBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 238, 238, 238),
-                            width: 2),
-                      ),
-                    ),
-                  ),
-                ),
               ),
               StreamBuilder<Map<String, dynamic>>(
                 stream: bloc!.savePost,
@@ -523,24 +530,6 @@ class _PostCardState extends State<PostCard> {
                           bloc.fetchAllPosts();
                           bloc.clearLikePostOutput();
                         }
-                      },
-                    );
-
-                    return const SizedBox.shrink();
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
-              StreamBuilder<Map<String, dynamic>>(
-                stream: bloc.commentPost,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                    final msg = snapshot.data!['message'] as String;
-                    Future.delayed(
-                      const Duration(microseconds: 500),
-                      () async {
-                        bloc.clearCommentPostOutput();
-                        bloc.fetchAllPosts();
                       },
                     );
 

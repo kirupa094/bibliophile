@@ -1,4 +1,5 @@
 import 'package:bibliophile/model/book_model.dart';
+import 'package:bibliophile/model/comment_model.dart';
 import 'package:bibliophile/model/create_post_model.dart';
 import 'package:bibliophile/model/post_model.dart';
 import 'package:bibliophile/model/shelf_model.dart';
@@ -85,5 +86,10 @@ class Repository {
   void userProfile(String token, String userId,
       Function(Map<String, dynamic>) add, Function(Object) addError) {
     _bibliophileApiProvider.userProfile(token, userId, add, addError);
+  }
+
+  void getComments(String token, String postId,
+      Function(List<CommentModel>) add, Function(Object) addError) {
+    _bibliophileApiProvider.getComments(token, postId, add, addError);
   }
 }
